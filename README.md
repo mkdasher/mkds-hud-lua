@@ -1,2 +1,3 @@
-# mkds-hud-lua
-MKDS HUD viewer
+# Mario Kart DS Custom HUD Lua
+
+TODO Description

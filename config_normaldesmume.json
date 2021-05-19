@@ -1,0 +1,136 @@
+{
+
+  "EDIT_PANEL": {
+    "MISC": {
+      "y": 25,
+      "x": 108,
+      "item_height": 11,
+      "width": 145
+    },
+    "CUSTOM_HUD": {
+      "y": 25,
+      "x": 4,
+      "item_height": 11,
+      "width": 100
+    },
+    "CUSTOM_HUD_EDIT_BUTTON": {
+      "y": 145,
+      "x": 150,
+      "height": 11,
+      "width": 100
+    },
+    "SAVE_CONFIG_BUTTON": {
+      "y": 160,
+      "x": 150,
+      "height": 11,
+      "width": 100
+    },
+	"HIDE_MENU_BUTTON": {
+      "y": 175,
+      "x": 150,
+      "height": 11,
+      "width": 100
+    },
+    "ORIGINAL_HUD": {
+      "y": 125,
+      "x": 4,
+      "item_height": 12,
+      "width": 100
+    }
+  },
+  "MISC": {
+    "disable_music": false,
+    "show_time_label_on_final_time": true,
+    "live_ghost": false,
+    "widescreen": false,
+    "show_time_label_on_timer": true,
+    "show_slash_on_kmh": true,
+    "disable_idisplay_after_finish": false,
+    "live_ghost_display_inputs": false
+  },
+  "ORIGINAL_HUD": {
+    "lap_counter": false,
+    "player_position": false,
+    "final_time": false,
+    "timer": false,
+    "item_roulette": false
+  },
+  "SCREEN_SIZE": {
+    "height": 192,
+    "width": 256
+  },
+  "BOOST_COLORS": {
+    "background_fill": "#00000020",
+    "background": "#00ff00ff",
+    "normal_fill": "#ffff00ff",
+    "prb_border": "#ff8000ff",
+    "prb_fill": "#ff0000ff",
+    "empty_border": "#222222ff",
+    "normal_border": "#c8a000ff"
+  },
+  "INPUT_DISPLAY_COLORS": {
+    "layout_border": "#000000ff",
+    "layout_fill": "#d8d8d8ff",
+    "button_pressed": "#ffffffff",
+    "button_unpressed": "#00000030",
+    "background": "#00ff00ff"
+  },
+  "CUSTOM_HUD": {
+    "final_time": {
+      "visible": true,
+      "scale": 1,
+      "position": {
+        "y": -182,
+        "x": 126
+      }
+    },
+    "timer": {
+      "visible": true,
+      "scale": 1,
+      "position": {
+        "y": -185,
+        "x": 129
+      }
+    },
+    "lap_counter": {
+      "visible": true,
+      "scale": 1,
+      "position": {
+        "y": -166,
+        "x": 178
+      }
+    },
+    "input_display": {
+      "visible": true,
+      "scale": 0.5,
+      "position": {
+        "y": -57,
+        "x": 6
+      }
+    },
+    "boost": {
+      "visible": true,
+      "scale": 0.5,
+      "position": {
+        "y": -13,
+        "x": 144
+      }
+    },
+    "speedometer": {
+      "visible": true,
+      "scale": 1,
+      "position": {
+        "y": -31,
+        "x": 187
+      }
+    },
+    "item_roulette": {
+      "visible": true,
+      "scale": 1,
+      "position": {
+        "y": -188,
+        "x": 4
+      }
+    }
+  }
+}
