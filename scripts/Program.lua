@@ -31,7 +31,7 @@ function Program.main(pointer, dataBuffer)
   	data.position.x = memory.readdwordsigned(pointer[2] + 0x80)
   	data.position.y = memory.readdwordsigned(pointer[2] + 0x88)
   	data.position.z = memory.readdwordsigned(pointer[2] + 0x84)
-  	data.real_speed = memory.readdwordsigned(pointer[2] + 0x2A8)
+  	data.real_speed = memory.readdwordsigned(pointer[2] + 0x2A8) / 360
 
     data.current_timer = Program.readTimer(pointer[1] + 0xD70)
 
@@ -53,6 +53,11 @@ function Program.main(pointer, dataBuffer)
 
   table.insert(dataBuffer, data)
   table.remove(dataBuffer, 1)
+
+  if dataBuffer[2] ~= nil and dataBuffer[3] ~= nil then
+	 dataBuffer[3].real_speed = math.sqrt((dataBuffer[3].position.y - dataBuffer[2].position.y) * (dataBuffer[3].position.y - dataBuffer[2].position.y) + (dataBuffer[3].position.x - dataBuffer[2].position.x) * (dataBuffer[3].position.x - dataBuffer[2].position.x))
+   dataBuffer[3].real_speed = dataBuffer[3].real_speed / 360
+  end
 
   return dataBuffer
 end

@@ -180,20 +180,25 @@ CustomHud.Items.speedometer.draw = function(data)
 
   if (Display.isHUDfinished(data)) then return end
 
+  local NUMBERLENGTH = 6
+
   local x, y = Config.Settings.CUSTOM_HUD.speedometer.position.x, Config.Settings.CUSTOM_HUD.speedometer.position.y
   local scale = Config.Settings.CUSTOM_HUD.speedometer.scale
-  local n = data.speed
 
-  if n < 0 then n = -n end
-  if n < 100 then x = x + MarioFont.NUMBER_SIZE * scale end
-  if n < 10 then x = x + MarioFont.NUMBER_SIZE * scale end
+  local speed = string.format("%.2f" ,math.abs(data.real_speed))
 
-  MarioFont.drawNumber({x = x, y = y}, n, "black", "white", data.fade, scale)
+  if not Config.Settings.MISC.show_kmh_decimals then
+    speed = math.floor(speed)
+  end
+
+  speed_str = (string.rep(" ", NUMBERLENGTH) .. tostring(speed)):sub(-NUMBERLENGTH,-1)
+
+  MarioFont.drawString(Config.Settings.CUSTOM_HUD.speedometer.position, speed_str, "black", "white", data.fade, scale)
 
   if Config.Settings.MISC.show_slash_on_kmh then
-    MarioFont.drawKmhSlashLabel({x = x + (MarioFont.NUMBER_SIZE * tostring(n):len() + 2) * scale, y = y}, "black", "white", data.fade, scale)
+    MarioFont.drawKmhSlashLabel({x = x + (MarioFont.NUMBER_SIZE * NUMBERLENGTH + 2) * scale, y = y}, "black", "white", data.fade, scale)
   else
-    MarioFont.drawKmhLabel({x = x + (MarioFont.NUMBER_SIZE * tostring(n):len() + 2) * scale, y = y}, "black", "white", data.fade, scale)
+    MarioFont.drawKmhLabel({x = x + (MarioFont.NUMBER_SIZE * NUMBERLENGTH + 2) * scale, y = y}, "black", "white", data.fade, scale)
   end
 
 end

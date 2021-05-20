@@ -43,6 +43,7 @@
     "show_time_label_on_final_time": true,
     "live_ghost": false,
     "widescreen": false,
+	"show_kmh_decimals" : false,
     "show_time_label_on_timer": true,
     "show_slash_on_kmh": true,
     "disable_idisplay_after_finish": false,
@@ -121,7 +122,7 @@
       "scale": 1,
       "position": {
         "y": -31,
-        "x": 187
+        "x": 159
       }
     },
     "item_roulette": {

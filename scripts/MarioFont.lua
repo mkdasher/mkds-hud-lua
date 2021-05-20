@@ -92,6 +92,24 @@ function MarioFont.getColons()
   }
 end
 
+function MarioFont.getDot()
+  return {
+    "00000000",
+    "00000000",
+    "00000000",
+    "00000000",
+    "00000000",
+    "00000000",
+    "00000000",
+    "00000000",
+    "00000000",
+    "00111100",
+    "00122100",
+    "00122100",
+    "00111100"
+  }
+end
+
 function MarioFont.getNumberPixels(i)
   numbers = {
     {
@@ -263,14 +281,18 @@ function MarioFont.drawPixel(x,y,color,fade,scale)
   end
 end
 
-function MarioFont.drawDigit(x,y, n, bordercolor, fillcolor, fade, scale)
+function MarioFont.drawChar(x,y, n, bordercolor, fillcolor, fade, scale)
   pixels = {}
   if n == " " then return end
   if n == ":" then
     pixels = MarioFont.getColons()
-  else
+  elseif n == "." then
+    pixels = MarioFont.getDot()
+  elseif tonumber(n) ~= nil then
     n = tonumber(n)
     pixels = MarioFont.getNumberPixels(n)
+  else
+    return
   end
   for i=0,7,1 do
     for j=0,12,1 do
@@ -282,13 +304,11 @@ function MarioFont.drawDigit(x,y, n, bordercolor, fillcolor, fade, scale)
 end
 
 
-function MarioFont.drawNumber(position, n, bordercolor, fillcolor, fade, scale)
+function MarioFont.drawString(position, n, bordercolor, fillcolor, fade, scale)
   local x,y = position.x, position.y
 
-  if n < 0 then n = -n end
-  n = tostring(n)
   for i=1,n:len(),1 do
-    MarioFont.drawDigit(x + MarioFont.NUMBER_SIZE*(i-1)*scale, y, n:sub(i,i), bordercolor, fillcolor, fade, scale)
+    MarioFont.drawChar(x + MarioFont.NUMBER_SIZE*(i-1)*scale, y, n:sub(i,i), bordercolor, fillcolor, fade, scale)
   end
 end
 
@@ -296,7 +316,7 @@ function MarioFont.drawTimer(position, timer, bordercolor, fillcolor, fade, scal
   local x,y = position.x, position.y
 
   for i=1,timer:len(),1 do
-    MarioFont.drawDigit(x + MarioFont.NUMBER_SIZE*(i-1)*scale, y, timer:sub(i,i), bordercolor, fillcolor, fade, scale)
+    MarioFont.drawChar(x + MarioFont.NUMBER_SIZE*(i-1)*scale, y, timer:sub(i,i), bordercolor, fillcolor, fade, scale)
   end
 end
 

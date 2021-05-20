@@ -29,7 +29,6 @@ function fm()
   local showHUD = pointer[2] ~= 0 and dataBuffer[1] ~= nil
   Display.displayHUD(dataBuffer, showHUD)
   Display.displayEditMenu(Config.Settings.SCREEN_SIZE)
-  
 end
 
 emu.registerafter(fn)
