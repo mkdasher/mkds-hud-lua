@@ -137,7 +137,7 @@ CustomHud.Items.final_time.draw = function(data)
     if i == 1 then
       if Config.Settings.MISC.show_time_label_on_final_time then MarioFont.drawLapLabel({x = x-9*scale+x_offset*scale, y = y+24*scale}, bordercolor, fillcolor, data.fade, scale) end
     end
-    if Config.Settings.MISC.show_time_label_on_final_time then MarioFont.drawDigit(x+27*scale+ x_offset*scale, y+24*scale+16*(i-1)*scale, tostring(i), bordercolor, fillcolor, data.fade, scale) end
+    if Config.Settings.MISC.show_time_label_on_final_time then MarioFont.drawChar(x+27*scale+ x_offset*scale, y+24*scale+16*(i-1)*scale, tostring(i), bordercolor, fillcolor, data.fade, scale) end
     MarioFont.drawTimer({x = x+1+38*scale+x_offset*scale, y = y+24*scale+16*(i-1)*scale}, data.lap_timer[i], bordercolor, fillcolor, data.fade, scale)
   end
 
