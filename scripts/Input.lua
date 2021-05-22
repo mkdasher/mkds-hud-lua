@@ -70,10 +70,19 @@ function Input.onClick(xmouse, ymouse)
       Config.Settings.ORIGINAL_HUD[original_hud_keys[selectedItem]] = not Config.Settings.ORIGINAL_HUD[original_hud_keys[selectedItem]]
     end
 
-    local misc_hud_size, misc_hud_keys = Utils.getTableSizeAndKeys(Config.Settings.MISC)
-    if Input.isInRange(xmouse, ymouse, Config.Settings.EDIT_PANEL.MISC.x, Config.Settings.EDIT_PANEL.MISC.y, Config.Settings.EDIT_PANEL.MISC.width, Config.Settings.EDIT_PANEL.MISC.item_height * misc_hud_size) then
+    local misc_size, misc_keys = Utils.getTableSizeAndKeys(Config.Settings.MISC)
+    if Input.isInRange(xmouse, ymouse, Config.Settings.EDIT_PANEL.MISC.x, Config.Settings.EDIT_PANEL.MISC.y, Config.Settings.EDIT_PANEL.MISC.width, Config.Settings.EDIT_PANEL.MISC.item_height * misc_size) then
       local selectedItem = math.floor((ymouse - Config.Settings.EDIT_PANEL.MISC.y) / Config.Settings.EDIT_PANEL.MISC.item_height) + 1
-      Config.Settings.MISC[misc_hud_keys[selectedItem]] = not Config.Settings.MISC[misc_hud_keys[selectedItem]]
+      Config.Settings.MISC[misc_keys[selectedItem]] = not Config.Settings.MISC[misc_keys[selectedItem]]
+    end
+
+    local actions_size, actions_keys = Utils.getTableSizeAndKeys(Actions.Items)
+    if Input.isInRange(xmouse, ymouse, Config.Settings.EDIT_PANEL.ACTIONS.x, Config.Settings.EDIT_PANEL.ACTIONS.y, Config.Settings.EDIT_PANEL.ACTIONS.width, Config.Settings.EDIT_PANEL.ACTIONS.item_height * actions_size) then
+      local selectedItem = math.floor((ymouse - Config.Settings.EDIT_PANEL.ACTIONS.y) / Config.Settings.EDIT_PANEL.ACTIONS.item_height) + 1
+      Actions.Items[actions_keys[selectedItem]].active = not Actions.Items[actions_keys[selectedItem]].active
+      if Actions.Items[actions_keys[selectedItem]].active then
+        Actions.Items[actions_keys[selectedItem]].start()
+      end
     end
 
     if Config.EDIT_CUSTOM_HUD.enabled then

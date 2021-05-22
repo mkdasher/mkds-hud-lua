@@ -7,6 +7,7 @@ function Program.main(pointer, dataBuffer)
   Program.disableMusic()
   Program.wideScreen()
   Program.liveGhost()
+  Program.executeActions()
 
   data = {}
 
@@ -18,6 +19,7 @@ function Program.main(pointer, dataBuffer)
     data.prb = bit.rshift(bit.band(data.prb, 32), 5)
     data.speed = memory.readbytesigned(pointer[2] + 0x45E)
     data.boost = memory.readbytesigned(pointer[2] + 0x238)
+    data.boost_mt = memory.readbytesigned(pointer[2] + 0x23C)
     data.shroom = memory.readbytesigned(pointer[3] + 0x54)
     data.lap = Memory.readVariable(Memory.variable.lap)
     data.totallaps = Memory.readVariable(Memory.variable.totallaps)
@@ -26,6 +28,9 @@ function Program.main(pointer, dataBuffer)
     data.finished_run = Memory.readVariable(Memory.variable.finished_run)
     data.ghost_input = Memory.readVariable(Memory.variable.ghost_input)
     data.fade = Memory.readVariable(Memory.variable.fade)
+
+    data.checkpoint = memory.readbytesigned(pointer[1] + 0xDAE)
+  	data.keycheckpoint = memory.readbytesigned(pointer[1] + 0xDB0)
 
   	data.position = {}
   	data.position.x = memory.readdwordsigned(pointer[2] + 0x80)
@@ -56,10 +61,18 @@ function Program.main(pointer, dataBuffer)
 
   if dataBuffer[2] ~= nil and dataBuffer[3] ~= nil then
 	 dataBuffer[3].real_speed = math.sqrt((dataBuffer[3].position.y - dataBuffer[2].position.y) * (dataBuffer[3].position.y - dataBuffer[2].position.y) + (dataBuffer[3].position.x - dataBuffer[2].position.x) * (dataBuffer[3].position.x - dataBuffer[2].position.x))
-   dataBuffer[3].real_speed = dataBuffer[3].real_speed / 360
   end
 
   return dataBuffer
+end
+
+function Program.executeActions()
+  local actions_size, actions_keys = Utils.getTableSizeAndKeys(Actions.Items)
+  local actions_buttontypes = {}
+
+  for i = 1, actions_size, 1 do
+    Actions.Items[actions_keys[i]].execute()
+  end
 end
 
 function Program.wideScreen()

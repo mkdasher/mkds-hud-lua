@@ -9,6 +9,7 @@ dofile "scripts/Bitmap.lua"
 dofile "scripts/Program.lua"
 dofile "scripts/Display.lua"
 dofile "scripts/CustomHud.lua"
+dofile "scripts/Actions.lua"
 dofile "scripts/MarioFont.lua"
 
 local dataBuffer = {nil,nil,nil}
@@ -29,6 +30,7 @@ function fm()
   local showHUD = pointer[2] ~= 0 and dataBuffer[1] ~= nil
   Display.displayHUD(dataBuffer, showHUD)
   Display.displayEditMenu(Config.Settings.SCREEN_SIZE)
+  Display.displayRamData(dataBuffer, pointer)
 end
 
 emu.registerafter(fn)

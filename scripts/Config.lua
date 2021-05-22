@@ -26,9 +26,9 @@ Config.Settings = {
   CUSTOM_HUD = {
     item_roulette = {visible = true, position = {x = 13, y = -352}, scale = 2},
     lap_counter = {visible = true, position = {x = 486, y = -308}, scale = 2},
-    speedometer = {visible = true, position = {x = 450, y = -63}, scale = 2},
+    speedometer = {visible = true, position = {x = 450, y = -60}, scale = 2},
     input_display = {visible = false, position = {x = 8, y = -110}, scale = 1},
-    boost = {visible = true, position = {x = 418, y = -30}, scale = 1},
+    boost = {visible = true, position = {x = 418, y = -27}, scale = 1},
     timer = {visible = true, position = {x = 388, y = -346}, scale = 2},
     final_time = {visible = true, position = {x = 380, y = -338}, scale = 2}
   },
@@ -38,8 +38,8 @@ Config.Settings = {
     live_ghost_display_inputs = false,
     widescreen = true,
     disable_idisplay_after_finish = false,
-    show_kmh_decimals = false,
-    show_slash_on_kmh = false,
+    show_kmh_decimals = true,
+    show_slash_on_kmh = true,
     show_time_label_on_timer = true,
     show_time_label_on_final_time = true
   },
@@ -60,12 +60,14 @@ Config.Settings = {
     background_fill = "#00000020"
   },
   EDIT_PANEL = {
-    CUSTOM_HUD = {x = 10, y = 40, width = 120, item_height = 25},
-    ORIGINAL_HUD = {x = 165, y = 40, width = 120, item_height = 25},
-    MISC = {x = 325, y = 40, width = 200, item_height = 25},
-    CUSTOM_HUD_EDIT_BUTTON = {x = 10, y = 230, width = 120, height = 25},
-    SAVE_CONFIG_BUTTON = {x = 510, y = 325, width = 120, height = 25},
-    HIDE_MENU_BUTTON = {x = 10, y = 325, width = 120, height = 25}
+    CUSTOM_HUD = {x = 10, y = 40, width = 100, item_height = 25},
+    ORIGINAL_HUD = {x = 125, y = 40, width = 100, item_height = 25},
+    MISC = {x = 240, y = 40, width = 180, item_height = 25},
+    CUSTOM_HUD_EDIT_BUTTON = {x = 10, y = 230, width = 100, height = 25},
+    SAVE_CONFIG_BUTTON = {x = 10, y = 290, width = 100, height = 25},
+    HIDE_MENU_BUTTON = {x = 10, y = 325, width = 100, height = 25},
+    ACTIONS = {x = 125, y = 215, width = 100, item_height = 25},
+    RAM_DATA = {x = 440, y = 24}
   },
   SCREEN_SIZE = {
     width = 640, height = 360

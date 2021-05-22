@@ -185,7 +185,7 @@ CustomHud.Items.speedometer.draw = function(data)
   local x, y = Config.Settings.CUSTOM_HUD.speedometer.position.x, Config.Settings.CUSTOM_HUD.speedometer.position.y
   local scale = Config.Settings.CUSTOM_HUD.speedometer.scale
 
-  local speed = string.format("%.2f" ,math.abs(data.real_speed))
+  local speed = string.format("%.2f" ,math.abs(data.real_speed / 360))
 
   if not Config.Settings.MISC.show_kmh_decimals then
     speed = math.floor(speed)

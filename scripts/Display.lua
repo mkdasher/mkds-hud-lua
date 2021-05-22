@@ -45,6 +45,43 @@ function Display.buttonList(title, size, keys, buttontypes, box)
   end
 end
 
+function Display.displayRamDataItem(x,y,text)
+  gui.text(Config.Settings.EDIT_PANEL.RAM_DATA.x + x, Config.Settings.EDIT_PANEL.RAM_DATA.y + y, text, "white", "black")
+end
+
+function Display.displayRamData(dataBuffer, pointer)
+
+  if not Config.EDIT_MENU.enabled then return end
+
+  Display.displayRamDataItem(0 ,0, "RAM DATA")
+  if dataBuffer[1] == nil then return end
+  local data = dataBuffer[1]
+
+  Display.displayRamDataItem(0,  20, "Pointer 1: " .. bit.tohex(pointer[1]))
+  Display.displayRamDataItem(0,  30, "Pointer 2: " .. bit.tohex(pointer[2]))
+  Display.displayRamDataItem(0,  40, "Pointer 3: " .. bit.tohex(pointer[3]))
+
+  Display.displayRamDataItem(0,  60, "X: " .. data.position.x)
+  Display.displayRamDataItem(0,  70, "Y: " .. data.position.y)
+  Display.displayRamDataItem(0,  80, "Z: " .. data.position.z)
+  Display.displayRamDataItem(0,  90, "Speed: " .. data.real_speed)
+  Display.displayRamDataItem(0, 100, "Internal Speed: " .. data.speed)
+
+  Display.displayRamDataItem(0, 120, "Boost: " .. data.boost)
+  Display.displayRamDataItem(0, 130, "Boost (mt only): " .. data.boost_mt)
+
+  Display.displayRamDataItem(0, 150, "Checkpoint: " .. data.checkpoint)
+  Display.displayRamDataItem(0, 160, "Key Checkpoint: " .. data.keycheckpoint)
+
+  Display.displayRamDataItem(0, 180, "Timer: " .. data.current_timer)
+  Display.displayRamDataItem(0, 190, "Lap (frames): " .. data.time_lap)
+
+  for i = 1, data.totallaps, 1 do
+    Display.displayRamDataItem(0, 200 + i*10, "Lap " .. i .. ": " .. data.lap_timer[i])
+  end
+
+end
+
 function Display.displayEditMenu(screensize)
 
   if not Config.EDIT_MENU.enabled then return end
@@ -95,12 +132,22 @@ function Display.displayEditMenu(screensize)
 
   -- Misc HUD
 
-  local misc_hud_size, misc_hud_keys = Utils.getTableSizeAndKeys(Config.Settings.MISC)
-  local misc_hud_buttontypes = {}
-  for i = 1, misc_hud_size, 1 do
-    misc_hud_buttontypes[i] = Config.Settings.MISC[misc_hud_keys[i]] and "pressed" or "unpressed"
+  local misc_size, misc_keys = Utils.getTableSizeAndKeys(Config.Settings.MISC)
+  local misc_buttontypes = {}
+  for i = 1, misc_size, 1 do
+    misc_buttontypes[i] = Config.Settings.MISC[misc_keys[i]] and "pressed" or "unpressed"
   end
-  Display.buttonList("MISC", misc_hud_size, misc_hud_keys, misc_hud_buttontypes, Config.Settings.EDIT_PANEL.MISC)
+  Display.buttonList("MISC", misc_size, misc_keys, misc_buttontypes, Config.Settings.EDIT_PANEL.MISC)
+
+  -- Actions Menu
+
+  local actions_size, actions_keys = Utils.getTableSizeAndKeys(Actions.Items)
+  local actions_buttontypes = {}
+
+  for i = 1, actions_size, 1 do
+    actions_buttontypes[i] = Actions.Items[actions_keys[i]].active and "pressed" or "unpressed"
+  end
+  Display.buttonList("ACTIONS", actions_size, actions_keys, actions_buttontypes, Config.Settings.EDIT_PANEL.ACTIONS)
 
   -- Save Config
 
@@ -125,6 +172,12 @@ function Display.displayEditMenu(screensize)
     Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON,
     "unpressed"
   )
+
+  -- Actions
+
+  for i = 1, actions_size, 1 do
+    Actions.Items[actions_keys[i]].draw()
+  end
 
 
 end
