@@ -54,12 +54,13 @@ function Display.displayRamData(dataBuffer, pointer)
   if not Config.EDIT_MENU.enabled then return end
 
   Display.displayRamDataItem(0 ,0, "RAM DATA")
-  if dataBuffer[1] == nil then return end
-  local data = dataBuffer[1]
-
+  
   Display.displayRamDataItem(0,  20, "Pointer 1: " .. bit.tohex(pointer[1]))
   Display.displayRamDataItem(0,  30, "Pointer 2: " .. bit.tohex(pointer[2]))
   Display.displayRamDataItem(0,  40, "Pointer 3: " .. bit.tohex(pointer[3]))
+
+  if dataBuffer[1] == nil then return end
+  local data = dataBuffer[1]
 
   Display.displayRamDataItem(0,  60, "X: " .. data.position.x)
   Display.displayRamDataItem(0,  70, "Y: " .. data.position.y)
