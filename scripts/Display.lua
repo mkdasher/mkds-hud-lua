@@ -54,7 +54,7 @@ function Display.displayRamData(dataBuffer, pointer)
   if not Config.EDIT_MENU.enabled then return end
 
   Display.displayRamDataItem(0 ,0, "RAM DATA")
-  
+
   Display.displayRamDataItem(0,  20, "Pointer 1: " .. bit.tohex(pointer[1]))
   Display.displayRamDataItem(0,  30, "Pointer 2: " .. bit.tohex(pointer[2]))
   Display.displayRamDataItem(0,  40, "Pointer 3: " .. bit.tohex(pointer[3]))
@@ -90,6 +90,8 @@ function Display.displayEditMenu(screensize)
   -- Main Panel
 
   gui.box(2, 2, screensize.width - 2, screensize.height - 2, "#00000080", "white")
+
+  gui.text(400, 345, "Right-click to interact with this menu!")
 
   -- Custom HUD
 

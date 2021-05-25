@@ -8,11 +8,11 @@ function Input.update()
 
   local xmouse, ymouse = Input.resizeCoordinates(Input.tab['xmouse'], Input.tab['ymouse'])
 
-  if Input.tab['leftclick'] and not Input.tab_prev['leftclick'] then
+  if Input.tab['rightclick'] and not Input.tab_prev['rightclick'] then
     Input.onClick(xmouse, ymouse)
-  elseif Input.tab['leftclick'] and Input.tab_prev['leftclick'] then
+  elseif Input.tab['rightclick'] and Input.tab_prev['rightclick'] then
     Input.onPress(xmouse, ymouse)
-  elseif not Input.tab['leftclick'] and Input.tab_prev['leftclick'] then
+  elseif not Input.tab['rightclick'] and Input.tab_prev['rightclick'] then
     Input.onRelease(xmouse, ymouse)
   end
 
