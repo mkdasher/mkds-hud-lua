@@ -1,12 +1,12 @@
 Display = {
   Button = {
-    pressed = {"#0000ffff", "white", "white", "black"},
-    unpressed = {"#00000000", "white", "#aaaaaaff", "black"},
-    disabled = {"#00000000", "white", "#aaaaaaff", "black"}
+    pressed = {0x0000ffff, 0xffffffff, 0xffffffff, 0x000000ff},
+    unpressed = {0x00000000, 0xffffffff, 0xaaaaaaff, 0x000000ff},
+    disabled = {0x00000000, 0xffffffff, 0xaaaaaaff, 0x000000ff}
   },
   Edit_Mode = {
-    unpressed = {"#ffffff88", "white"},
-    pressed = {"#ffff0080", "yellow"}
+    unpressed = {0xffffff88, 0xffffffff},
+    pressed = {0xffff0080, 0xffff00ff}
   }
 }
 
@@ -31,7 +31,7 @@ function Display.button(x1,y1,x2,y2,text,box,buttontype)
 end
 
 function Display.buttonList(title, size, keys, buttontypes, box)
-  gui.text(box.x, box.y - 16, Utils.getCenteredText(title, math.ceil(box.width / 6)), "white", "black")
+  gui.text(box.x, box.y - 16, Utils.getCenteredText(title, math.ceil(box.width / 6)), 0xffffffff, 0x000000ff)
   for i = 1, size, 1 do
     Display.button(
       box.x,
@@ -46,7 +46,7 @@ function Display.buttonList(title, size, keys, buttontypes, box)
 end
 
 function Display.displayRamDataItem(x,y,text)
-  gui.text(Config.Settings.EDIT_PANEL.RAM_DATA.x + x, Config.Settings.EDIT_PANEL.RAM_DATA.y + y, text, "white", "black")
+  gui.text(Config.Settings.EDIT_PANEL.RAM_DATA.x + x, Config.Settings.EDIT_PANEL.RAM_DATA.y + y, text, 0xffffffff, 0x000000ff)
 end
 
 function Display.displayRamData(dataBuffer, pointer)
@@ -89,7 +89,7 @@ function Display.displayEditMenu(screensize)
 
   -- Main Panel
 
-  gui.box(2, 2, screensize.width - 2, screensize.height - 2, "#00000080", "white")
+  gui.box(2, 2, screensize.width - 2, screensize.height - 2, "#00000080", 0xffffffff)
 
   gui.text(400, 345, "Right-click to interact with this menu!")
 
@@ -116,7 +116,7 @@ function Display.displayEditMenu(screensize)
     for i = 1, custom_hud_size, 1 do
       local item_position = Config.Settings.CUSTOM_HUD[custom_hud_keys[i]].position
       if Config.EDIT_CUSTOM_HUD.item == custom_hud_keys[i] then
-        gui.text(item_position.x - 5, item_position.y - 10, "(" .. item_position.x .. ", " .. item_position.y .. ")", Display.Edit_Mode.pressed[2], "black")
+        gui.text(item_position.x - 5, item_position.y - 10, "(" .. item_position.x .. ", " .. item_position.y .. ")", Display.Edit_Mode.pressed[2], 0x000000ff)
         gui.box(item_position.x, item_position.y, item_position.x + 15, item_position.y + 15, Display.Edit_Mode.pressed[1], Display.Edit_Mode.pressed[2])
       else
         gui.box(item_position.x, item_position.y, item_position.x + 15, item_position.y + 15, Display.Edit_Mode.unpressed[1], Display.Edit_Mode.unpressed[2])

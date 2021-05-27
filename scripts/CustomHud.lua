@@ -31,19 +31,19 @@ CustomHud.Items.input_display.draw = function(data)
 
 
   local palette = {
-       "#000000ff",
-       "#ff0000ff",
-       "#008000ff",
-       "#ff8000ff",
-       "#00ff00ff",
-       "#ffff00ff",
-       "#800080ff",
-       "#808080ff",
-       "#0000ffff",
-       "#00ffffff",
-       "#ff00ffff",
-       "#ff80ffff",
-       "#ffffffff"
+       0x000000ff,
+       0xff0000ff,
+       0x008000ff,
+       0xff8000ff,
+       0x00ff00ff,
+       0xffff00ff,
+       0x800080ff,
+       0x808080ff,
+       0x0000ffff,
+       0x00ffffff,
+       0xff00ffff,
+       0xff80ffff,
+       0xffffffff
   }
 
   local finalPalette = {
@@ -77,8 +77,8 @@ CustomHud.Items.boost.draw = function(data)
     local x,y = Config.Settings.CUSTOM_HUD.boost.position.x, Config.Settings.CUSTOM_HUD.boost.position.y
 
     palette = {
-         "#000000ff",
-         "#00ff00ff"
+         0x000000ff,
+         0x00ff00ff
     }
 
     local border = colors.empty_border
@@ -112,14 +112,14 @@ CustomHud.Items.final_time.draw = function(data)
 
 
   local x,y = position.x, position.y
-  local bordercolor = "black"
-  local fillcolor = "white"
-  local fillcolor_best = "white"
+  local bordercolor = 0x000000ff
+  local fillcolor = 0xffffffff
+  local fillcolor_best = 0xffffffff
 
-  if data.time_lap % 16 < 4 then fillcolor_best = "white"
-  elseif data.time_lap % 16 < 8 then fillcolor_best = "#ffc600ff"
-  elseif data.time_lap % 16 < 12 then fillcolor_best = "#ff5a5aff"
-  else fillcolor_best = "#ffc600ff"
+  if data.time_lap % 16 < 4 then fillcolor_best = 0xffffffff
+  elseif data.time_lap % 16 < 8 then fillcolor_best = 0xffc600ff
+  elseif data.time_lap % 16 < 12 then fillcolor_best = 0xff5a5aff
+  else fillcolor_best = 0xffc600ff
   end
 
   local x_offset = 0
@@ -193,12 +193,12 @@ CustomHud.Items.speedometer.draw = function(data)
 
   speed_str = (string.rep(" ", NUMBERLENGTH) .. tostring(speed)):sub(-NUMBERLENGTH,-1)
 
-  MarioFont.drawString(Config.Settings.CUSTOM_HUD.speedometer.position, speed_str, "black", "white", data.fade, scale)
+  MarioFont.drawString(Config.Settings.CUSTOM_HUD.speedometer.position, speed_str, 0x000000ff, 0xffffffff, data.fade, scale)
 
   if Config.Settings.MISC.show_slash_on_kmh then
-    MarioFont.drawKmhSlashLabel({x = x + (MarioFont.NUMBER_SIZE * NUMBERLENGTH + 2) * scale, y = y}, "black", "white", data.fade, scale)
+    MarioFont.drawKmhSlashLabel({x = x + (MarioFont.NUMBER_SIZE * NUMBERLENGTH + 2) * scale, y = y}, 0x000000ff, 0xffffffff, data.fade, scale)
   else
-    MarioFont.drawKmhLabel({x = x + (MarioFont.NUMBER_SIZE * NUMBERLENGTH + 2) * scale, y = y}, "black", "white", data.fade, scale)
+    MarioFont.drawKmhLabel({x = x + (MarioFont.NUMBER_SIZE * NUMBERLENGTH + 2) * scale, y = y}, 0x000000ff, 0xffffffff, data.fade, scale)
   end
 
 end
@@ -210,16 +210,16 @@ CustomHud.Items.timer.draw = function(data)
   local position = Config.Settings.CUSTOM_HUD.timer.position
   local scale = Config.Settings.CUSTOM_HUD.timer.scale
 
-  local bordercolor = "black"
-  local fillcolor = "white"
+  local bordercolor = 0x000000ff
+  local fillcolor = 0xffffffff
 
   local timer_position = {x = position.x + 1 + 38 * scale, y = position.y}
 
   if data.lap > 1 and data.time_lap < 128 then
-    if data.time_lap % 16 < 4 then fillcolor = "white"
-    elseif data.time_lap % 16 < 8 then fillcolor = "#ffc600ff"
-    elseif data.time_lap % 16 < 12 then fillcolor = "#ff5a5aff"
-    else fillcolor = "#ffc600ff"
+    if data.time_lap % 16 < 4 then fillcolor = 0xffffffff
+    elseif data.time_lap % 16 < 8 then fillcolor = 0xffc600ff
+    elseif data.time_lap % 16 < 12 then fillcolor = 0xff5a5aff
+    else fillcolor = 0xffc600ff
     end
 
     if Config.Settings.MISC.show_time_label_on_timer then MarioFont.drawLapLabel(position, bordercolor, fillcolor, data.fade, scale) end

@@ -38,18 +38,19 @@ function Utils.getCenteredText(t, size)
 end
 
 function Utils.setColorFade(color, fade)
-  if color == "black" then color = "#000000ff"
-  elseif color == "white" then color = "#ffffffff"
+  if color == "black" then color = 0xff
+  elseif color == "white" then color = 0xffffffff
   end
 
-  if color:sub(1,1) ~= "#" then return color end
+  if type(color) == "string" then return end
 
-  local rgb = {tonumber(color:sub(2,3),16), tonumber(color:sub(4,5),16), tonumber(color:sub(6,7),16)}
   local real_fade = (16 + fade) * 16
-
-  local r = math.floor(rgb[1] * real_fade / 256)
-  local g = math.floor(rgb[2] * real_fade / 256)
-  local b = math.floor(rgb[3] * real_fade / 256)
-
-  return "#" .. bit.tohex(r,2) .. bit.tohex(g,2) .. bit.tohex(b,2) .. color:sub(-2,-1)
+  local r = bit.rshift(color, 24)
+  local g = bit.rshift(color, 16) % 256
+  local b = bit.rshift(color, 8) % 256
+  local a = color % 256
+  r = math.floor(r * real_fade / 256)
+  g = math.floor(g * real_fade / 256)
+  b = math.floor(b * real_fade / 256)
+  return r * 0x1000000 + g * 0x10000 + b * 0x100 + a
 end

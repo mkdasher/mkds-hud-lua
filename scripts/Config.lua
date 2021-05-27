@@ -44,20 +44,20 @@ Config.Settings = {
     show_time_label_on_final_time = true
   },
   INPUT_DISPLAY_COLORS = {
-    button_pressed = "#ffffffff",
-    button_unpressed = "#00000030",
-    layout_fill = "#d8d8d8ff",
-    layout_border = "#000000ff",
-    background = "#00ff00ff"
+    button_pressed = 0xffffffff,
+    button_unpressed = 0x00000030,
+    layout_fill = 0xd8d8d8ff,
+    layout_border = 0x000000ff,
+    background = 0x00ff00ff
   },
   BOOST_COLORS = {
-    empty_border = "#222222ff",
-    normal_border = "#c8a000ff",
-    normal_fill = "#ffff00ff",
-    prb_border = "#ff8000ff",
-    prb_fill = "#ff0000ff",
-    background = "#00ff00ff",
-    background_fill = "#00000020"
+    empty_border = 0x222222ff,
+    normal_border = 0xc8a000ff,
+    normal_fill = 0xffff00ff,
+    prb_border = 0xff8000ff,
+    prb_fill = 0xff0000ff,
+    background = 0x00ff00ff,
+    background_fill = 0x00000020
   },
   EDIT_PANEL = {
     CUSTOM_HUD = {x = 10, y = 40, width = 100, item_height = 25},

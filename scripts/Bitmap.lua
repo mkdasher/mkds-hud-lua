@@ -10,7 +10,7 @@ function Bitmap.bytes_to_int(b1, b2, b3, b4)
 end
 
 function Bitmap.bytes_to_color(b1, b2, b3)
-  return "#" .. bit.tohex(b3,2) .. bit.tohex(b2,2) .. bit.tohex(b1,2) .. "ff"
+  return 255 + b3 * 0x1000000 + b2 * 0x10000 + b1 * 0x100
 end
 
 function Bitmap.readPixel(buffer)
@@ -70,8 +70,8 @@ function Bitmap.readImage(filename)
   else
 	print(filename .. " failed to load!")
   end
-  
-  
+
+
 end
 
 function Bitmap.switchColor(color, palette, finalPalette)
@@ -92,7 +92,7 @@ function Bitmap.printImageIndexed(x,y,filename,palette,finalPalette,fade,scale)
     for j=0,image.width-1,1 do
       color = image[j+1][i+1]
       color = Bitmap.switchColor(color, palette, finalPalette)
-      if color ~= "#00ff00ff" then
+      if color ~= 0x00ff00ff then
         Bitmap.drawPixel(x + j*scale, y + i*scale, color, fade, scale)
       end
     end
@@ -109,7 +109,7 @@ function Bitmap.printImage(x,y,filename,fade,scale)
   for i=0,image.height-1,1 do
     for j=0,image.width-1,1 do
       color = image[j+1][i+1]
-      if color ~= "#001863ff" and color ~= "#001063ff" then
+      if color ~= 0x01863ff and color ~= 0x001063ff then
         Bitmap.drawPixel(x + j*scale, y + i*scale, color, fade, scale)
       end
     end
