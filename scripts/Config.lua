@@ -27,7 +27,7 @@ Config.Settings = {
     item_roulette = {visible = true, position = {x = 13, y = -352}, scale = 2},
     lap_counter = {visible = true, position = {x = 486, y = -308}, scale = 2},
     speedometer = {visible = true, position = {x = 450, y = -60}, scale = 2},
-    input_display = {visible = false, position = {x = 8, y = -110}, scale = 1},
+    input_display = {visible = true, position = {x = 8, y = -110}, scale = 1},
     boost = {visible = true, position = {x = 418, y = -27}, scale = 1},
     timer = {visible = true, position = {x = 388, y = -346}, scale = 2},
     final_time = {visible = true, position = {x = 380, y = -338}, scale = 2}
@@ -37,8 +37,8 @@ Config.Settings = {
     live_ghost = false,
     live_ghost_display_inputs = false,
     widescreen = true,
-    disable_idisplay_after_finish = false,
-    show_kmh_decimals = true,
+    disable_idisplay_after_finish = true,
+    show_kmh_decimals = false,
     show_slash_on_kmh = true,
     show_time_label_on_timer = true,
     show_time_label_on_final_time = true
