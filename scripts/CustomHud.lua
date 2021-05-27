@@ -184,6 +184,9 @@ CustomHud.Items.speedometer.draw = function(data)
 
   local x, y = Config.Settings.CUSTOM_HUD.speedometer.position.x, Config.Settings.CUSTOM_HUD.speedometer.position.y
   local scale = Config.Settings.CUSTOM_HUD.speedometer.scale
+  if not Config.Settings.MISC.show_slash_on_kmh then
+    x = x + 6 * scale
+  end
 
   local speed = string.format("%.2f" ,math.abs(data.real_speed / 360))
 
@@ -193,7 +196,7 @@ CustomHud.Items.speedometer.draw = function(data)
 
   speed_str = (string.rep(" ", NUMBERLENGTH) .. tostring(speed)):sub(-NUMBERLENGTH,-1)
 
-  MarioFont.drawString(Config.Settings.CUSTOM_HUD.speedometer.position, speed_str, 0x000000ff, 0xffffffff, data.fade, scale)
+  MarioFont.drawString({x = x, y = y}, speed_str, 0x000000ff, 0xffffffff, data.fade, scale)
 
   if Config.Settings.MISC.show_slash_on_kmh then
     MarioFont.drawKmhSlashLabel({x = x + (MarioFont.NUMBER_SIZE * NUMBERLENGTH + 2) * scale, y = y}, 0x000000ff, 0xffffffff, data.fade, scale)
