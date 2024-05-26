@@ -131,5 +131,8 @@ function Bitmap.loadAllBitmaps()
 	Bitmap.readImage('resources/lap_empty.bmp')
 	Bitmap.readImage('resources/lap_total3.bmp')
 	Bitmap.readImage('resources/lap_total5.bmp')
+  Bitmap.readImage('resources/social_media_1.bmp')
+  Bitmap.readImage('resources/social_media_2.bmp')
+  Bitmap.readImage('resources/social_media_3.bmp')
 	print('Finished reading all resources!')
 end

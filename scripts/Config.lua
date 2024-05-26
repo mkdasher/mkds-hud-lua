@@ -30,7 +30,8 @@ Config.Settings = {
     input_display = {visible = true, position = {x = 8, y = -110}, scale = 1},
     boost = {visible = true, position = {x = 418, y = -27}, scale = 1},
     timer = {visible = true, position = {x = 388, y = -346}, scale = 2},
-    final_time = {visible = true, position = {x = 380, y = -338}, scale = 2}
+    final_time = {visible = true, position = {x = 380, y = -338}, scale = 2},
+    social_media = {visible = true, position = {x = 422, y = -123}, scale = 1}
   },
   MISC = {
     disable_music = false,
@@ -63,9 +64,9 @@ Config.Settings = {
     CUSTOM_HUD = {x = 10, y = 40, width = 100, item_height = 25},
     ORIGINAL_HUD = {x = 125, y = 40, width = 100, item_height = 25},
     MISC = {x = 240, y = 40, width = 180, item_height = 25},
-    CUSTOM_HUD_EDIT_BUTTON = {x = 10, y = 230, width = 100, height = 25},
-    SAVE_CONFIG_BUTTON = {x = 10, y = 290, width = 100, height = 25},
-    HIDE_MENU_BUTTON = {x = 10, y = 325, width = 100, height = 25},
+    CUSTOM_HUD_EDIT_BUTTON = {x = 10, y = 285, width = 100, height = 25},
+    SAVE_CONFIG_BUTTON = {x = 10, y = 325, width = 100, height = 25},
+    HIDE_MENU_BUTTON = {x = 130, y = 325, width = 100, height = 25},
     ACTIONS = {x = 125, y = 215, width = 100, item_height = 25},
     RAM_DATA = {x = 440, y = 24}
   },
