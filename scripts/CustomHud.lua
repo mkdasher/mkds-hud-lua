@@ -6,7 +6,8 @@ CustomHud = {
     item_roulette = {},
     lap_counter = {},
     speedometer = {},
-    timer = {}
+    timer = {},
+    social_media = {}
   }
 }
 
@@ -235,5 +236,24 @@ CustomHud.Items.timer.draw = function(data)
     if Config.Settings.MISC.show_time_label_on_timer then MarioFont.drawTimeLabel(position, bordercolor, fillcolor, data.fade, scale) end
     MarioFont.drawTimer(timer_position, data.current_timer, bordercolor, fillcolor, data.fade, scale)
   end
+
+end
+
+CustomHud.Items.social_media.draw = function(data)
+
+  if data.finished_run < 1 or data.time_lap < 140 then return end
+
+  local position = Config.Settings.CUSTOM_HUD.social_media.position
+  local scale = Config.Settings.CUSTOM_HUD.social_media.scale
+
+  local x,y = position.x, position.y
+
+  for i=1,3,1 do
+    local x_offset = 0
+    local t_lap = 160 + 36 + i*4 - data.time_lap
+    if t_lap > 0 then x_offset = 270 * t_lap / 20 end
+    Bitmap.printImage(x + x_offset*scale, y + (i-1) * 40,'resources/social_media_' .. i .. '.bmp', data.fade, scale)
+  end
+
 
 end
