@@ -1,43 +1,4 @@
 {
-
-  "EDIT_PANEL": {
-    "MISC": {
-      "y": 25,
-      "x": 108,
-      "item_height": 11,
-      "width": 145
-    },
-    "CUSTOM_HUD": {
-      "y": 25,
-      "x": 4,
-      "item_height": 11,
-      "width": 100
-    },
-    "CUSTOM_HUD_EDIT_BUTTON": {
-      "y": 145,
-      "x": 150,
-      "height": 11,
-      "width": 100
-    },
-    "SAVE_CONFIG_BUTTON": {
-      "y": 160,
-      "x": 150,
-      "height": 11,
-      "width": 100
-    },
-	"HIDE_MENU_BUTTON": {
-      "y": 175,
-      "x": 150,
-      "height": 11,
-      "width": 100
-    },
-    "ORIGINAL_HUD": {
-      "y": 125,
-      "x": 4,
-      "item_height": 12,
-      "width": 100
-    }
-  },
   "MISC": {
     "disable_music": false,
     "show_time_label_on_final_time": true,

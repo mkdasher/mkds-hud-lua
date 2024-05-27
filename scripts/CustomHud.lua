@@ -25,7 +25,7 @@ CustomHud.Items.input_display.draw = function(data)
 
   local j = Input.getJoypad()
 
-  if data ~= nil and Config.Settings.MISC.live_ghost and Config.Settings.MISC.live_ghost_display_inputs and data.finished_run == 0 then
+  if data ~= nil and Config.Settings.HACKS.live_ghost and Config.Settings.MISC.live_ghost_display_inputs and data.finished_run == 0 then
     j = Input.getGhostInput(data.ghost_input)
   end
 

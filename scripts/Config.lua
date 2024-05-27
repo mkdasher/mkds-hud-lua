@@ -33,15 +33,18 @@ Config.Settings = {
     final_time = {visible = true, position = {x = 380, y = -338}, scale = 2}
   },
   MISC = {
-    disable_music = false,
-    live_ghost = false,
-    live_ghost_display_inputs = false,
-    widescreen = true,
-    disable_idisplay_after_finish = true,
+    disable_input_display_after_finish_race = true,
+    display_live_ghost_inputs = false,
     show_kmh_decimals = false,
     show_slash_on_kmh = true,
     show_time_label_on_timer = true,
-    show_time_label_on_final_time = true
+    show_time_label_on_final_time = true,
+    green_screen_touchscreen = false
+  },
+  HACKS = {
+    widescreen = true,
+    live_ghost = false,
+    disable_music = false,
   },
   INPUT_DISPLAY_COLORS = {
     button_pressed = 0xffffffff,
@@ -59,19 +62,30 @@ Config.Settings = {
     background = 0x00ff00ff,
     background_fill = 0x00000020
   },
-  EDIT_PANEL = {
-    CUSTOM_HUD = {x = 10, y = 40, width = 100, item_height = 25},
-    ORIGINAL_HUD = {x = 125, y = 40, width = 100, item_height = 25},
-    MISC = {x = 240, y = 40, width = 180, item_height = 25},
-    CUSTOM_HUD_EDIT_BUTTON = {x = 10, y = 230, width = 100, height = 25},
-    SAVE_CONFIG_BUTTON = {x = 10, y = 290, width = 100, height = 25},
-    HIDE_MENU_BUTTON = {x = 10, y = 325, width = 100, height = 25},
-    ACTIONS = {x = 125, y = 215, width = 100, item_height = 25},
-    RAM_DATA = {x = 440, y = 24}
-  },
   SCREEN_SIZE = {
     width = 640, height = 360
   }
+}
+
+Config.Edit_Panel = {
+  TAB_MENU = {
+    x = 10, y = 10, width = 100, box_width = 350, height = 265, item_height = 25,
+    selected_tab = 1,
+    TABS = {
+      'HUD_ELEMENTS',
+      'HUD_SETTINGS',
+      'HACKS'
+    }
+  },
+  CUSTOM_HUD = {x = 110, y = 40, width = 175, item_height = 25},
+  ORIGINAL_HUD = {x = 285, y = 40, width = 175, item_height = 25},
+  MISC = {x = 110, y = 10, width = 350, item_height = 25},
+  HACKS = {x = 110, y = 10, width = 350, item_height = 25},
+  CUSTOM_HUD_EDIT_BUTTON = {x = 125, y = 325, width = 100, height = 25},
+  SAVE_CONFIG_BUTTON = {x = 10, y = 290, width = 100, height = 25},
+  HIDE_MENU_BUTTON = {x = 10, y = 325, width = 100, height = 25},
+  ACTIONS = {x = 240, y = 300, width = 100, item_height = 25},
+  RAM_DATA = {x = 480, y = 24}
 }
 
 function Config.loadJSON(filename)

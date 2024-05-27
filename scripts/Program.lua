@@ -23,14 +23,14 @@ function Program.main(pointer, dataBuffer)
     data.shroom = memory.readbytesigned(pointer[3] + 0x54)
     data.lap = Memory.readVariable(Memory.variable.lap)
     data.totallaps = Memory.readVariable(Memory.variable.totallaps)
-    data.time_total = memory.readdword(pointer[1] + 0xD68)
-    data.time_lap = memory.readdword(pointer[1] + 0xD80)
+    data.time_total = memory.readdword(pointer[1])
+    data.time_lap = memory.readdword(pointer[1] + 0x18)
     data.finished_run = Memory.readVariable(Memory.variable.finished_run)
     data.ghost_input = Memory.readVariable(Memory.variable.ghost_input)
     data.fade = Memory.readVariable(Memory.variable.fade)
 
-    data.checkpoint = memory.readbytesigned(pointer[1] + 0xDAE)
-  	data.keycheckpoint = memory.readbytesigned(pointer[1] + 0xDB0)
+    data.checkpoint = memory.readbytesigned(pointer[1] + 0x46)
+  	data.keycheckpoint = memory.readbytesigned(pointer[1] + 0x48)
 
   	data.position = {}
   	data.position.x = memory.readdwordsigned(pointer[2] + 0x80)
@@ -38,15 +38,15 @@ function Program.main(pointer, dataBuffer)
   	data.position.z = memory.readdwordsigned(pointer[2] + 0x84)
   	data.real_speed = memory.readdwordsigned(pointer[2] + 0x2A8)
 
-    data.current_timer = Program.readTimer(pointer[1] + 0xD70)
+    data.current_timer = Program.readTimer(pointer[1] + 0x8)
 
     data.lap_timer = {}
 
     for i = 1, data.totallaps, 1 do
-      data.lap_timer[i] = Program.readTimer(pointer[1] + 0xD88 + 4 * (i-1))
+      data.lap_timer[i] = Program.readTimer(pointer[1] + 0x20 + 4 * (i-1))
     end
 
-    data.final_timer = Program.readTimer(pointer[1] + 0xD9C)
+    data.final_timer = Program.readTimer(pointer[1] + 0x34)
 
   end
 
@@ -63,7 +63,7 @@ function Program.main(pointer, dataBuffer)
 	 dataBuffer[3].real_speed = math.sqrt((dataBuffer[3].position.y - dataBuffer[2].position.y) * (dataBuffer[3].position.y - dataBuffer[2].position.y) + (dataBuffer[3].position.x - dataBuffer[2].position.x) * (dataBuffer[3].position.x - dataBuffer[2].position.x))
 	 if dataBuffer[3].real_speed / 360 > 1000 then
 		dataBuffer[3].real_speed = 0
-	 end	 
+	 end
   end
 
   return dataBuffer
@@ -81,7 +81,7 @@ end
 function Program.wideScreen()
 
   base_ratio = 5461
-  local aspect_ratio = Config.Settings.MISC.widescreen and "16:9" or "4:3"
+  local aspect_ratio = Config.Settings.HACKS.widescreen and "16:9" or "4:3"
 
   if aspect_ratio == nil or aspect_ratio == "original" or aspect_ratio == "native" or aspect_ratio == "4:3" then
     Memory.writeVariable(Memory.variable.aspect_ratio, base_ratio)
@@ -119,12 +119,12 @@ function Program.disableHUD()
 end
 
 function Program.liveGhost()
-  Memory.writeVariable(Memory.variable.live_ghost, Config.Settings.MISC.live_ghost and 1 or 0)
+  Memory.writeVariable(Memory.variable.live_ghost, Config.Settings.HACKS.live_ghost and 1 or 0)
 end
 
 function Program.disableMusic()
   music_value = 0x7f
-  if Config.Settings.MISC.disable_music then music_value = 0 end
+  if Config.Settings.HACKS.disable_music then music_value = 0 end
   Memory.writeVariable(Memory.variable.music1, music_value)
   Memory.writeVariable(Memory.variable.music2, music_value)
 end

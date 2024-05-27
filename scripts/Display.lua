@@ -30,7 +30,7 @@ function Display.button(x1,y1,x2,y2,text,box,buttontype)
   gui.text(x1, y1 + box.height/2 - 2, Utils.getCenteredText(text, math.ceil(box.width / 6)), Display.Button[buttontype][3], Display.Button[buttontype][4])
 end
 
-function Display.buttonList(title, size, keys, buttontypes, box)
+function Display.buttonListWithTitle(title, size, keys, buttontypes, box)
   gui.text(box.x, box.y - 16, Utils.getCenteredText(title, math.ceil(box.width / 6)), 0xffffffff, 0x000000ff)
   for i = 1, size, 1 do
     Display.button(
@@ -45,8 +45,22 @@ function Display.buttonList(title, size, keys, buttontypes, box)
   end
 end
 
+function Display.buttonList(size, keys, buttontypes, box)
+  for i = 1, size, 1 do
+    Display.button(
+      box.x,
+      box.y + (i-1) * box.item_height,
+      box.x + box.width,
+      box.y + i * box.item_height,
+      string.upper(keys[i]:gsub("_"," ")),
+      {x = box.x, y = box.y, width = box.width, height = box.item_height},
+      buttontypes[i]
+    )
+  end
+end
+
 function Display.displayRamDataItem(x,y,text)
-  gui.text(Config.Settings.EDIT_PANEL.RAM_DATA.x + x, Config.Settings.EDIT_PANEL.RAM_DATA.y + y, text, 0xffffffff, 0x000000ff)
+  gui.text(Config.Edit_Panel.RAM_DATA.x + x, Config.Edit_Panel.RAM_DATA.y + y, text, 0xffffffff, 0x000000ff)
 end
 
 function Display.displayRamData(dataBuffer, pointer)
@@ -85,30 +99,97 @@ end
 
 function Display.displayEditMenu(screensize)
 
+  if Config.Settings.MISC.green_screen_touchscreen then
+    gui.box(0, 0,  screensize.width, screensize.height, "#00ff00", "#00ff00")
+  end
+
   if not Config.EDIT_MENU.enabled then return end
 
   -- Main Panel
 
-  gui.box(2, 2, screensize.width - 2, screensize.height - 2, "#00000080", 0xffffffff)
-
+  gui.box(1, 1, screensize.width - 1, screensize.height - 1, "#00000080", 0xffffffff)
   gui.text(400, 345, "Right-click to interact with this menu!")
+
+  -- Tab MENU
+
+  gui.box(
+    Config.Edit_Panel.TAB_MENU.x + Config.Edit_Panel.TAB_MENU.width,
+    Config.Edit_Panel.TAB_MENU.y,
+    Config.Edit_Panel.TAB_MENU.x + Config.Edit_Panel.TAB_MENU.width + Config.Edit_Panel.TAB_MENU.box_width,
+    Config.Edit_Panel.TAB_MENU.y + Config.Edit_Panel.TAB_MENU.height,
+    "#00000000",
+    0xffffffff
+  )
+
+  local tab_size, tab_keys = Utils.getTableSizeAndKeys(Config.Edit_Panel.TAB_MENU.TABS)
+  local tab_buttontypes = {}
+  for i = 1, tab_size, 1 do
+    tab_buttontypes[i] = Config.Edit_Panel.TAB_MENU.selected_tab == i and "pressed" or "unpressed"
+  end
+  Display.buttonList(tab_size, Config.Edit_Panel.TAB_MENU.TABS, tab_buttontypes, Config.Edit_Panel.TAB_MENU)
+
 
   -- Custom HUD
 
-  local custom_hud_size, custom_hud_keys = Utils.getTableSizeAndKeys(CustomHud.Items)
-  local custom_hud_buttontypes = {}
-  for i = 1, custom_hud_size, 1 do
-    custom_hud_buttontypes[i] = Config.Settings.CUSTOM_HUD[custom_hud_keys[i]].visible and "pressed" or "unpressed"
+  if Config.Edit_Panel.TAB_MENU.TABS[Config.Edit_Panel.TAB_MENU.selected_tab] == "HUD_ELEMENTS" then
+
+    local custom_hud_size, custom_hud_keys = Utils.getTableSizeAndKeys(CustomHud.Items)
+    local custom_hud_buttontypes = {}
+    for i = 1, custom_hud_size, 1 do
+      custom_hud_buttontypes[i] = Config.Settings.CUSTOM_HUD[custom_hud_keys[i]].visible and "pressed" or "unpressed"
+    end
+    Display.buttonListWithTitle("CUSTOM HUD", custom_hud_size, custom_hud_keys, custom_hud_buttontypes, Config.Edit_Panel.CUSTOM_HUD)
+
   end
-  Display.buttonList("CUSTOM HUD", custom_hud_size, custom_hud_keys, custom_hud_buttontypes, Config.Settings.EDIT_PANEL.CUSTOM_HUD)
+
+  -- Original HUD
+
+  if Config.Edit_Panel.TAB_MENU.TABS[Config.Edit_Panel.TAB_MENU.selected_tab] == "HUD_ELEMENTS" then
+
+    local original_hud_size, original_hud_keys = Utils.getTableSizeAndKeys(Config.Settings.ORIGINAL_HUD)
+    local original_hud_buttontypes = {}
+    for i = 1, original_hud_size, 1 do
+      original_hud_buttontypes[i] = Config.Settings.ORIGINAL_HUD[original_hud_keys[i]] and "pressed" or "unpressed"
+    end
+    Display.buttonListWithTitle("ORIGINAL HUD", original_hud_size, original_hud_keys, original_hud_buttontypes, Config.Edit_Panel.ORIGINAL_HUD)
+
+  end
+
+  -- Misc HUD
+
+  if Config.Edit_Panel.TAB_MENU.TABS[Config.Edit_Panel.TAB_MENU.selected_tab] == "HUD_SETTINGS" then
+
+    local misc_size, misc_keys = Utils.getTableSizeAndKeys(Config.Settings.MISC)
+    local misc_buttontypes = {}
+    for i = 1, misc_size, 1 do
+      misc_buttontypes[i] = Config.Settings.MISC[misc_keys[i]] and "pressed" or "unpressed"
+    end
+    Display.buttonList(misc_size, misc_keys, misc_buttontypes, Config.Edit_Panel.MISC)
+
+  end
+
+  -- Hack HUD
+
+  if Config.Edit_Panel.TAB_MENU.TABS[Config.Edit_Panel.TAB_MENU.selected_tab] == "HACKS" then
+
+    local hack_size, hack_keys = Utils.getTableSizeAndKeys(Config.Settings.HACKS)
+    local hack_buttontypes = {}
+    for i = 1, hack_size, 1 do
+      hack_buttontypes[i] = Config.Settings.HACKS[hack_keys[i]] and "pressed" or "unpressed"
+    end
+    Display.buttonList(hack_size, hack_keys, hack_buttontypes, Config.Edit_Panel.HACKS)
+
+  end
+
+  -- Edit Mode
 
   Display.button(
-    Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.x,
-    Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.y,
-    Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.x + Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.width,
-    Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.y + Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.height,
+    Config.Edit_Panel.CUSTOM_HUD_EDIT_BUTTON.x,
+    Config.Edit_Panel.CUSTOM_HUD_EDIT_BUTTON.y,
+    Config.Edit_Panel.CUSTOM_HUD_EDIT_BUTTON.x + Config.Edit_Panel.CUSTOM_HUD_EDIT_BUTTON.width,
+    Config.Edit_Panel.CUSTOM_HUD_EDIT_BUTTON.y + Config.Edit_Panel.CUSTOM_HUD_EDIT_BUTTON.height,
     "EDIT MODE",
-    Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON,
+    Config.Edit_Panel.CUSTOM_HUD_EDIT_BUTTON,
     Config.EDIT_CUSTOM_HUD.enabled and "pressed" or "unpressed"
   )
 
@@ -124,24 +205,6 @@ function Display.displayEditMenu(screensize)
     end
   end
 
-  -- Original HUD
-
-  local original_hud_size, original_hud_keys = Utils.getTableSizeAndKeys(Config.Settings.ORIGINAL_HUD)
-  local original_hud_buttontypes = {}
-  for i = 1, original_hud_size, 1 do
-    original_hud_buttontypes[i] = Config.Settings.ORIGINAL_HUD[original_hud_keys[i]] and "pressed" or "unpressed"
-  end
-  Display.buttonList("ORIGINAL HUD", original_hud_size, original_hud_keys, original_hud_buttontypes, Config.Settings.EDIT_PANEL.ORIGINAL_HUD)
-
-  -- Misc HUD
-
-  local misc_size, misc_keys = Utils.getTableSizeAndKeys(Config.Settings.MISC)
-  local misc_buttontypes = {}
-  for i = 1, misc_size, 1 do
-    misc_buttontypes[i] = Config.Settings.MISC[misc_keys[i]] and "pressed" or "unpressed"
-  end
-  Display.buttonList("MISC", misc_size, misc_keys, misc_buttontypes, Config.Settings.EDIT_PANEL.MISC)
-
   -- Actions Menu
 
   local actions_size, actions_keys = Utils.getTableSizeAndKeys(Actions.Items)
@@ -150,29 +213,29 @@ function Display.displayEditMenu(screensize)
   for i = 1, actions_size, 1 do
     actions_buttontypes[i] = Actions.Items[actions_keys[i]].active and "pressed" or "unpressed"
   end
-  Display.buttonList("ACTIONS", actions_size, actions_keys, actions_buttontypes, Config.Settings.EDIT_PANEL.ACTIONS)
+  Display.buttonListWithTitle("ACTIONS", actions_size, actions_keys, actions_buttontypes, Config.Edit_Panel.ACTIONS)
 
   -- Save Config
 
   Display.button(
-    Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.x,
-    Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.y,
-    Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.x + Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.width,
-    Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.y + Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.height,
+    Config.Edit_Panel.SAVE_CONFIG_BUTTON.x,
+    Config.Edit_Panel.SAVE_CONFIG_BUTTON.y,
+    Config.Edit_Panel.SAVE_CONFIG_BUTTON.x + Config.Edit_Panel.SAVE_CONFIG_BUTTON.width,
+    Config.Edit_Panel.SAVE_CONFIG_BUTTON.y + Config.Edit_Panel.SAVE_CONFIG_BUTTON.height,
     "SAVE CONFIG",
-    Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON,
+    Config.Edit_Panel.SAVE_CONFIG_BUTTON,
     Config.SAVE_CONFIG.pressed and "pressed" or "unpressed"
   )
 
   -- Hide Menu Button
 
   Display.button(
-    Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.x,
-    Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.y,
-    Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.x + Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.width,
-    Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.y + Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.height,
+    Config.Edit_Panel.HIDE_MENU_BUTTON.x,
+    Config.Edit_Panel.HIDE_MENU_BUTTON.y,
+    Config.Edit_Panel.HIDE_MENU_BUTTON.x + Config.Edit_Panel.HIDE_MENU_BUTTON.width,
+    Config.Edit_Panel.HIDE_MENU_BUTTON.y + Config.Edit_Panel.HIDE_MENU_BUTTON.height,
     "HIDE MENU",
-    Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON,
+    Config.Edit_Panel.HIDE_MENU_BUTTON,
     "unpressed"
   )
 
