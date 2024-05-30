@@ -2,7 +2,7 @@ Display = {
   Button = {
     pressed = {0x0000ffff, 0xffffffff, 0xffffffff, 0x000000ff},
     unpressed = {0x00000000, 0xffffffff, 0xaaaaaaff, 0x000000ff},
-    disabled = {0x00000000, 0xffffffff, 0xaaaaaaff, 0x000000ff}
+    disabled = {0x00000000, 0xaaaaaaff, 0xaaaaaaff, 0x000000ff}
   },
   Edit_Mode = {
     unpressed = {0xffffff88, 0xffffffff},
@@ -38,7 +38,7 @@ function Display.buttonListWithTitle(title, size, keys, buttontypes, box)
       box.y + (i-1) * box.item_height,
       box.x + box.width,
       box.y + i * box.item_height,
-      string.upper(keys[i]:gsub("_"," ")),
+      Utils.capitalizeWithSpaces(keys[i]),
       {x = box.x, y = box.y, width = box.width, height = box.item_height},
       buttontypes[i]
     )
@@ -52,7 +52,7 @@ function Display.buttonList(size, keys, buttontypes, box)
       box.y + (i-1) * box.item_height,
       box.x + box.width,
       box.y + i * box.item_height,
-      string.upper(keys[i]:gsub("_"," ")),
+      Utils.capitalizeWithSpaces(keys[i]),
       {x = box.x, y = box.y, width = box.width, height = box.item_height},
       buttontypes[i]
     )
@@ -63,36 +63,37 @@ function Display.displayRamDataItem(x,y,text)
   gui.text(Config.Edit_Panel.RAM_DATA.x + x, Config.Edit_Panel.RAM_DATA.y + y, text, 0xffffffff, 0x000000ff)
 end
 
-function Display.displayRamData(dataBuffer, pointer)
+function Display.displayRamData(dataBuffer, pointer, pointer_addresses)
 
   if not Config.EDIT_MENU.enabled then return end
 
-  Display.displayRamDataItem(0 ,0, "RAM DATA")
+  Display.displayRamDataItem(0 ,0, "RAM DATA", 'yellow')
 
-  Display.displayRamDataItem(0,  20, "Pointer 1: " .. bit.tohex(pointer[1]))
-  Display.displayRamDataItem(0,  30, "Pointer 2: " .. bit.tohex(pointer[2]))
-  Display.displayRamDataItem(0,  40, "Pointer 3: " .. bit.tohex(pointer[3]))
+  Display.displayRamDataItem(0 , 20, "Pointers")
+  Display.displayRamDataItem(0,  30, "1: [" .. bit.tohex(pointer_addresses[1]) .. "] -> " .. bit.tohex(pointer[1]))
+  Display.displayRamDataItem(0,  40, "2: [" .. bit.tohex(pointer_addresses[2]) .. "] -> " .. bit.tohex(pointer[2]))
+  Display.displayRamDataItem(0,  50, "3: [" .. bit.tohex(pointer_addresses[3]) .. "] -> " .. bit.tohex(pointer[3]))
 
   if dataBuffer[1] == nil then return end
   local data = dataBuffer[1]
 
-  Display.displayRamDataItem(0,  60, "X: " .. data.position.x)
-  Display.displayRamDataItem(0,  70, "Y: " .. data.position.y)
-  Display.displayRamDataItem(0,  80, "Z: " .. data.position.z)
-  Display.displayRamDataItem(0,  90, "Speed: " .. data.real_speed)
-  Display.displayRamDataItem(0, 100, "Internal Speed: " .. data.speed)
+  Display.displayRamDataItem(0,  70, "X: " .. data.position.x)
+  Display.displayRamDataItem(0,  80, "Y: " .. data.position.y)
+  Display.displayRamDataItem(0,  90, "Z: " .. data.position.z)
+  Display.displayRamDataItem(0, 100, "Speed: " .. data.real_speed)
+  Display.displayRamDataItem(0, 110, "Internal Speed: " .. data.speed)
 
-  Display.displayRamDataItem(0, 120, "Boost: " .. data.boost)
-  Display.displayRamDataItem(0, 130, "Boost (mt only): " .. data.boost_mt)
+  Display.displayRamDataItem(0, 130, "Boost: " .. data.boost)
+  Display.displayRamDataItem(0, 140, "Boost (mt only): " .. data.boost_mt)
 
-  Display.displayRamDataItem(0, 150, "Checkpoint: " .. data.checkpoint)
-  Display.displayRamDataItem(0, 160, "Key Checkpoint: " .. data.keycheckpoint)
+  Display.displayRamDataItem(0, 160, "Checkpoint: " .. data.checkpoint)
+  Display.displayRamDataItem(0, 170, "Key Checkpoint: " .. data.keycheckpoint)
 
-  Display.displayRamDataItem(0, 180, "Timer: " .. data.current_timer)
-  Display.displayRamDataItem(0, 190, "Lap (frames): " .. data.time_lap)
+  Display.displayRamDataItem(0, 190, "Timer: " .. data.current_timer)
+  Display.displayRamDataItem(0, 200, "Lap (frames): " .. data.time_lap)
 
   for i = 1, data.totallaps, 1 do
-    Display.displayRamDataItem(0, 200 + i*10, "Lap " .. i .. ": " .. data.lap_timer[i])
+    Display.displayRamDataItem(0, 210 + i*10, "Lap " .. i .. ": " .. data.lap_timer[i])
   end
 
 end
@@ -121,7 +122,7 @@ function Display.displayEditMenu(screensize)
     0xffffffff
   )
 
-  local tab_size, tab_keys = Utils.getTableSizeAndKeys(Config.Edit_Panel.TAB_MENU.TABS)
+  local tab_size = #Config.Edit_Panel.TAB_MENU.TABS
   local tab_buttontypes = {}
   for i = 1, tab_size, 1 do
     tab_buttontypes[i] = Config.Edit_Panel.TAB_MENU.selected_tab == i and "pressed" or "unpressed"
@@ -172,12 +173,91 @@ function Display.displayEditMenu(screensize)
 
   if Config.Edit_Panel.TAB_MENU.TABS[Config.Edit_Panel.TAB_MENU.selected_tab] == "HACKS" then
 
-    local hack_size, hack_keys = Utils.getTableSizeAndKeys(Config.Settings.HACKS)
-    local hack_buttontypes = {}
+    local total_hack_size, total_hack_keys = Utils.getTableSizeAndKeys(Config.Edit_Panel.HACKS.ITEMS)
+    local hack_keys =  Utils.getPageItems(total_hack_keys, Config.Edit_Panel.HACKS.items_per_page, Config.Edit_Panel.HACKS.selected_page)
+    local hack_size = #hack_keys
+
     for i = 1, hack_size, 1 do
-      hack_buttontypes[i] = Config.Settings.HACKS[hack_keys[i]] and "pressed" or "unpressed"
+      gui.text(Config.Edit_Panel.HACKS.x + 10, Config.Edit_Panel.HACKS.y + (i - 0.5) * (Config.Edit_Panel.HACKS.item_height + 5) - 5, Utils.capitalizeWithSpaces(hack_keys[i]), 0xffffffff, 0x000000ff)
+
+      local item_width = Config.Edit_Panel.HACKS.default_item_width
+      if Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].item_width then
+        item_width = Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].item_width
+      end
+
+      if Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].options == nil then
+        local pressed = {true,false}
+        if not Config.Settings.HACKS[hack_keys[i]] then pressed = {false,true} end
+        for j = 1, 2, 1 do
+          Display.button(
+            Config.Edit_Panel.HACKS.x + Config.Edit_Panel.HACKS.header_width + item_width * (j-1),
+            Config.Edit_Panel.HACKS.y + (i-1) * (Config.Edit_Panel.HACKS.item_height + Config.Edit_Panel.HACKS.item_gap),
+            Config.Edit_Panel.HACKS.x + Config.Edit_Panel.HACKS.header_width + item_width * (j),
+            Config.Edit_Panel.HACKS.y + i * (Config.Edit_Panel.HACKS.item_height + Config.Edit_Panel.HACKS.item_gap) - Config.Edit_Panel.HACKS.item_gap,
+            j == 1 and "ENABLED" or "DISABLED",
+            {x = Config.Edit_Panel.HACKS.x + item_width, y = Config.Edit_Panel.HACKS.y + i * (Config.Edit_Panel.HACKS.item_height + Config.Edit_Panel.HACKS.item_gap), width = item_width, height = Config.Edit_Panel.HACKS.item_height},
+            pressed[j] and "pressed" or "unpressed"
+          )
+        end
+      else
+        for j = 1, #Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].options, 1 do
+            Display.button(
+              Config.Edit_Panel.HACKS.x + Config.Edit_Panel.HACKS.header_width + item_width * (j-1),
+              Config.Edit_Panel.HACKS.y + (i-1) * (Config.Edit_Panel.HACKS.item_height + Config.Edit_Panel.HACKS.item_gap),
+              Config.Edit_Panel.HACKS.x + Config.Edit_Panel.HACKS.header_width + item_width * (j),
+              Config.Edit_Panel.HACKS.y + i * (Config.Edit_Panel.HACKS.item_height + Config.Edit_Panel.HACKS.item_gap) - Config.Edit_Panel.HACKS.item_gap,
+              Utils.capitalizeWithSpaces(Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].options[j]),
+              {x = Config.Edit_Panel.HACKS.x + item_width, y = Config.Edit_Panel.HACKS.y + i * (Config.Edit_Panel.HACKS.item_height + Config.Edit_Panel.HACKS.item_gap), width = item_width, height = Config.Edit_Panel.HACKS.item_height},
+              Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].options[j] == Config.Settings.HACKS[hack_keys[i]] and "pressed" or "unpressed"
+            )
+        end
+      end
+
+      if Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].extra_buttons ~= nil then
+        local hack_extra_size, hack_extra_keys = Utils.getTableSizeAndKeys(Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].extra_buttons)
+        for j = 1, hack_extra_size, 1 do
+          local key = hack_extra_keys[j]
+          Display.button(
+            Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].extra_buttons[key].x,
+            Config.Edit_Panel.HACKS.y + (i-1) * (Config.Edit_Panel.HACKS.item_height + Config.Edit_Panel.HACKS.item_gap),
+            Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].extra_buttons[key].x + Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].extra_buttons[key].width,
+            Config.Edit_Panel.HACKS.y + i * (Config.Edit_Panel.HACKS.item_height + Config.Edit_Panel.HACKS.item_gap) - Config.Edit_Panel.HACKS.item_gap,
+            Utils.capitalizeWithSpaces(key),
+            {x = Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].extra_buttons[key].x, y = Config.Edit_Panel.HACKS.y + i * (Config.Edit_Panel.HACKS.item_height + Config.Edit_Panel.HACKS.item_gap), width = Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].extra_buttons[key].width, height = Config.Edit_Panel.HACKS.item_height},
+            Config.Settings.HACKS_EXTRA_BUTTONS[key] and "pressed" or "unpressed"
+          )
+        end
+      end
     end
-    Display.buttonList(hack_size, hack_keys, hack_buttontypes, Config.Edit_Panel.HACKS)
+
+    local page_selector = {
+      x = Config.Edit_Panel.TAB_MENU.x + Config.Edit_Panel.TAB_MENU.width + Config.Edit_Panel.TAB_MENU.box_width / 2 - 3 * 15 / 2,
+      y = Config.Edit_Panel.TAB_MENU.y + Config.Edit_Panel.TAB_MENU.height - 20,
+      button_size = 15
+    }
+    Display.button(
+      page_selector.x,
+      page_selector.y,
+      page_selector.x + page_selector.button_size,
+      page_selector.y + page_selector.button_size,
+      "<",
+      {x = page_selector.x, y = page_selector.y, width = page_selector.button_size, height = page_selector.button_size},
+      Config.Edit_Panel.HACKS.selected_page > 1 and "pressed" or "disabled"
+    )
+    gui.text(
+      page_selector.x + page_selector.button_size + 5,
+      page_selector.y + page_selector.button_size/2 - 2,
+      Utils.getCenteredText(tostring(Config.Edit_Panel.HACKS.selected_page), math.ceil(15 / 6))
+    )
+    Display.button(
+      page_selector.x + page_selector.button_size * 2 + 10,
+      page_selector.y,
+      page_selector.x + page_selector.button_size * 3 + 10,
+      page_selector.y + page_selector.button_size,
+      ">",
+      {x = page_selector.x + page_selector.button_size * 2 + 10, y = page_selector.y, width = page_selector.button_size, height = page_selector.button_size},
+      Config.Edit_Panel.HACKS.selected_page * Config.Edit_Panel.HACKS.items_per_page < total_hack_size and "pressed" or "disabled"
+    )
 
   end
 

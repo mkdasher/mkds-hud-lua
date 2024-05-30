@@ -1,4 +1,5 @@
 -- Script Made by MKDasher --
+-- Contributors: Pikalex
 
 dofile "scripts/json.lua"
 dofile "scripts/Utils.lua"
@@ -10,17 +11,22 @@ dofile "scripts/Program.lua"
 dofile "scripts/Display.lua"
 dofile "scripts/CustomHud.lua"
 dofile "scripts/Actions.lua"
+dofile "scripts/Hacks.lua"
 dofile "scripts/MarioFont.lua"
 
 local dataBuffer = {nil,nil,nil}
 local pointer = {0,0,0}
+local pointer_addresses = {0,0,0}
 
 Config.load()
 Bitmap.loadAllBitmaps()
 
 function fn()
   Memory.setVersion()
-  pointer = Memory.getPointers()
+  pointer_addresses = Memory.getPointerAddresses()
+  for i = 1, #pointer_addresses, 1 do
+    pointer[i] = memory.readdword(pointer_addresses[i])
+  end
   dataBuffer = Program.main(pointer, dataBuffer)
 end
 
@@ -30,7 +36,7 @@ function fm()
   local showHUD = pointer[2] ~= 0 and dataBuffer[1] ~= nil
   Display.displayHUD(dataBuffer, showHUD)
   Display.displayEditMenu(Config.Settings.SCREEN_SIZE)
-  Display.displayRamData(dataBuffer, pointer)
+  Display.displayRamData(dataBuffer, pointer, pointer_addresses)
 end
 
 emu.registerafter(fn)

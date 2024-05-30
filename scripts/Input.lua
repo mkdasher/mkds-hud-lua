@@ -56,7 +56,7 @@ function Input.onClick(xmouse, ymouse)
 
     -- TAB BUTTONS
 
-    local tab_size, tab_keys = Utils.getTableSizeAndKeys(Config.Edit_Panel.TAB_MENU.TABS)
+    local tab_size = #Config.Edit_Panel.TAB_MENU.TABS
     if Input.isInRange(xmouse, ymouse, Config.Edit_Panel.TAB_MENU.x, Config.Edit_Panel.TAB_MENU.y, Config.Edit_Panel.TAB_MENU.width, Config.Edit_Panel.TAB_MENU.item_height * tab_size) then
       Config.Edit_Panel.TAB_MENU.selected_tab = math.floor((ymouse - Config.Edit_Panel.TAB_MENU.y) / Config.Edit_Panel.TAB_MENU.item_height) + 1
     end
@@ -87,10 +87,57 @@ function Input.onClick(xmouse, ymouse)
 
     elseif Config.Edit_Panel.TAB_MENU.TABS[Config.Edit_Panel.TAB_MENU.selected_tab] == "HACKS" then
 
-      local hack_size, hack_keys = Utils.getTableSizeAndKeys(Config.Settings.HACKS)
-      if Input.isInRange(xmouse, ymouse, Config.Edit_Panel.HACKS.x, Config.Edit_Panel.HACKS.y, Config.Edit_Panel.HACKS.width, Config.Edit_Panel.HACKS.item_height * hack_size) then
-        local selectedItem = math.floor((ymouse - Config.Edit_Panel.HACKS.y) / Config.Edit_Panel.HACKS.item_height) + 1
-        Config.Settings.HACKS[hack_keys[selectedItem]] = not Config.Settings.HACKS[hack_keys[selectedItem]]
+      local total_hack_size, total_hack_keys = Utils.getTableSizeAndKeys(Config.Edit_Panel.HACKS.ITEMS)
+      local hack_keys =  Utils.getPageItems(total_hack_keys, Config.Edit_Panel.HACKS.items_per_page, Config.Edit_Panel.HACKS.selected_page)
+      local hack_size = #hack_keys
+
+      for i = 1, hack_size, 1 do
+        local item_width = Config.Edit_Panel.HACKS.default_item_width
+        local options = Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].options or {true,false}
+        if Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].item_width then
+          item_width = Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].item_width
+        end
+        if Input.isInRange(
+          xmouse,
+          ymouse,
+          Config.Edit_Panel.HACKS.x + Config.Edit_Panel.HACKS.header_width,
+          Config.Edit_Panel.HACKS.y + (i-1) * (Config.Edit_Panel.HACKS.item_height + Config.Edit_Panel.HACKS.item_gap),
+          item_width * #options,
+          Config.Edit_Panel.HACKS.item_height
+        ) then
+          local selectedItem = math.floor((xmouse - Config.Edit_Panel.HACKS.x - Config.Edit_Panel.HACKS.header_width) / item_width) + 1
+          Config.Settings.HACKS[hack_keys[i]] = options[selectedItem]
+        elseif Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].extra_buttons ~= nil then
+          local hack_extra_size, hack_extra_keys = Utils.getTableSizeAndKeys(Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].extra_buttons)
+          for j = 1, hack_extra_size, 1 do
+            local key = hack_extra_keys[j]
+            if Input.isInRange(
+              xmouse,
+              ymouse,
+              Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].extra_buttons[key].x,
+              Config.Edit_Panel.HACKS.y + (i-1) * (Config.Edit_Panel.HACKS.item_height + Config.Edit_Panel.HACKS.item_gap),
+              Config.Edit_Panel.HACKS.ITEMS[hack_keys[i]].extra_buttons[key].width,
+              Config.Edit_Panel.HACKS.item_height
+            ) then
+              Config.Settings.HACKS_EXTRA_BUTTONS[key] = not Config.Settings.HACKS_EXTRA_BUTTONS[key]
+            end
+          end
+        end
+      end
+
+      local page_selector = {
+        x = Config.Edit_Panel.TAB_MENU.x + Config.Edit_Panel.TAB_MENU.width + Config.Edit_Panel.TAB_MENU.box_width / 2 - 3 * 15 / 2,
+        y = Config.Edit_Panel.TAB_MENU.y + Config.Edit_Panel.TAB_MENU.height - 20,
+        button_size = 15
+      }
+      if Input.isInRange(xmouse, ymouse, page_selector.x, page_selector.y, page_selector.button_size, page_selector.button_size) then
+        if Config.Edit_Panel.HACKS.selected_page > 1 then
+          Config.Edit_Panel.HACKS.selected_page = Config.Edit_Panel.HACKS.selected_page - 1
+        end
+      elseif Input.isInRange(xmouse, ymouse, page_selector.x + page_selector.button_size * 2 + 10, page_selector.y, page_selector.button_size, page_selector.button_size) then
+        if Config.Edit_Panel.HACKS.selected_page * Config.Edit_Panel.HACKS.items_per_page < total_hack_size then
+          Config.Edit_Panel.HACKS.selected_page = Config.Edit_Panel.HACKS.selected_page + 1
+        end
       end
 
     end

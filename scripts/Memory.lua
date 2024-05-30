@@ -7,7 +7,7 @@ Memory = {
 }
 
 Memory.VPOINTERS = { -- Version POINTERS
-  LIVE_GHOST = 0x23c5640,
+  RACE = 0x23c5640,
   MUSIC = 0x23C4920,
   MAIN = 0x2000B54,
   SCREEN = 0x2031458
@@ -19,12 +19,16 @@ Memory.variable = {
   finished_run = {pointer = Memory.VPOINTERS.MAIN, offset = 0xB96C, size = 1},
   fade = {pointer = Memory.VPOINTERS.MAIN, offset = 0x6270, size = 2},
   ghost_input = {pointer = Memory.VPOINTERS.MAIN, offset = 0x6346, size = 2},
+  camera_pointer = {pointer = Memory.VPOINTERS.MAIN, offset = 0xB72C, size = 4},
 
-  live_ghost = {pointer = Memory.VPOINTERS.LIVE_GHOST, offset = 0x23C9B74, size = 4},
+  live_ghost = {pointer = Memory.VPOINTERS.RACE, offset = 0x23C9B74, size = 4},
+  cc = {pointer = Memory.VPOINTERS.RACE, offset = 0x23C9B08, size = 4},
+  unlock_everything = {pointer = Memory.VPOINTERS.RACE, offset = 0x23CA100, size = 4},
 
   music1 = {pointer = Memory.VPOINTERS.MUSIC, offset = 0x5B0, size = 4},
   music2 = {pointer = Memory.VPOINTERS.MUSIC, offset = 0x5D4, size = 4},
 
+  replay_camera = {pointer = Memory.VPOINTERS.SCREEN, offset = 0x2041234 - 0x2c0, K = 0x20413F8, size = 2},
   aspect_ratio = {pointer = Memory.VPOINTERS.SCREEN, offset = 0x20775D0 - 0x2c0, K = 0x20762C8, size = 4},
   hud_aspect_ratio = {pointer = Memory.VPOINTERS.SCREEN, offset = 0x208A068 - 0x2c0, K = 0x20884C8, size = 2},
   hud_lapcount = {pointer = Memory.VPOINTERS.SCREEN, offset = 0x20BC244 - 0x2c0, K = 0x20B9130, size = 1},
@@ -38,16 +42,16 @@ function Memory.setVersion()
     Memory.version = memory.readdword(0x023FFA8C)
 end
 
-function Memory.getPointers()
+function Memory.getPointerAddresses()
   if Memory.version == Memory.K then return {
-    memory.readdword(0x216F9A0),
-    memory.readdword(memory.readdword(Memory.VPOINTERS.MAIN) + 0xB9D8),
-    memory.readdword(memory.readdword(Memory.VPOINTERS.MAIN) + 0xC90C)
+    0x216F9A0,
+    memory.readdword(Memory.VPOINTERS.MAIN) + 0xB9D8,
+    memory.readdword(Memory.VPOINTERS.MAIN) + 0xC90C
   } else
   return {
-    memory.readdword(memory.readdword(Memory.VPOINTERS.MAIN) + 0x62DC),
-    memory.readdword(memory.readdword(Memory.VPOINTERS.MAIN) + 0xB9D8),
-    memory.readdword(memory.readdword(Memory.VPOINTERS.MAIN) + 0xC90C)
+    memory.readdword(Memory.VPOINTERS.MAIN) + 0x62DC,
+    memory.readdword(Memory.VPOINTERS.MAIN) + 0xB9D8,
+    memory.readdword(Memory.VPOINTERS.MAIN) + 0xC90C
   }
   end
 end
@@ -57,7 +61,7 @@ function Memory.readVariable(variable)
   if Memory.version == 0 then return 0 end
 
   local addr = 0
-  if Memory.version == Memory.K and variable.pointer == Memory.VPOINTERS.SCREEN then addr = variable.K
+  if Memory.version == Memory.K and variable.K ~= nil then addr = variable.K
   else addr = memory.readdword(variable.pointer) + variable.offset
   end
 

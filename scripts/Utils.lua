@@ -2,12 +2,31 @@ Utils = {
 
 }
 
+
+function Utils.capitalizeWithSpaces(t)
+  return string.upper(t:gsub("_"," "))
+end
+
 function Utils.getTableSize(t)
   local i = 0
   for k, v in pairs(t) do
     i = i + 1
   end
   return i
+end
+
+function Utils.getPageItems(array, items_per_page, selected_page)
+  local start_index = (selected_page - 1) * items_per_page + 1
+    local end_index = start_index + items_per_page - 1
+    local subarray = {}
+
+    for i = start_index, end_index do
+        if array[i] then
+            table.insert(subarray, array[i])
+        end
+    end
+
+    return subarray
 end
 
 function Utils.getTableKeys(t)

@@ -34,7 +34,6 @@ Config.Settings = {
   },
   MISC = {
     disable_input_display_after_finish_race = true,
-    display_live_ghost_inputs = false,
     show_kmh_decimals = false,
     show_slash_on_kmh = true,
     show_time_label_on_timer = true,
@@ -42,9 +41,18 @@ Config.Settings = {
     green_screen_touchscreen = false
   },
   HACKS = {
-    widescreen = true,
+    aspect_ratio = 'widescreen',
     live_ghost = false,
-    disable_music = false,
+    camera_view = 'off',
+    music = true,
+    cc = 'off',
+    force_finish_race = false,
+    ghost_flickering = "off",
+    unlock_everything = false,
+    replay_camera_hack = false
+  },
+  HACKS_EXTRA_BUTTONS = {
+    display_inputs = true
   },
   INPUT_DISPLAY_COLORS = {
     button_pressed = 0xffffffff,
@@ -69,7 +77,7 @@ Config.Settings = {
 
 Config.Edit_Panel = {
   TAB_MENU = {
-    x = 10, y = 10, width = 100, box_width = 350, height = 265, item_height = 25,
+    x = 10, y = 30, width = 90, box_width = 370, height = 240, item_height = 25,
     selected_tab = 1,
     TABS = {
       'HUD_ELEMENTS',
@@ -77,15 +85,56 @@ Config.Edit_Panel = {
       'HACKS'
     }
   },
-  CUSTOM_HUD = {x = 110, y = 40, width = 175, item_height = 25},
-  ORIGINAL_HUD = {x = 285, y = 40, width = 175, item_height = 25},
-  MISC = {x = 110, y = 10, width = 350, item_height = 25},
-  HACKS = {x = 110, y = 10, width = 350, item_height = 25},
+  CUSTOM_HUD = {x = 110, y = 60, width = 175, item_height = 25},
+  ORIGINAL_HUD = {x = 285, y = 60, width = 175, item_height = 25},
+  MISC = {x = 110, y = 40, width = 350, item_height = 25},
   CUSTOM_HUD_EDIT_BUTTON = {x = 125, y = 325, width = 100, height = 25},
   SAVE_CONFIG_BUTTON = {x = 10, y = 290, width = 100, height = 25},
   HIDE_MENU_BUTTON = {x = 10, y = 325, width = 100, height = 25},
-  ACTIONS = {x = 240, y = 300, width = 100, item_height = 25},
-  RAM_DATA = {x = 480, y = 24}
+  ACTIONS = {x = 245, y = 300, width = 100, item_height = 25},
+  RAM_DATA = {x = 485, y = 40},
+  HACKS = {
+    x = 100,
+    y = 40,
+    width = 370,
+    item_height = 20,
+    item_gap = 5,
+    header_width = 125,
+    default_item_width = 100,
+    items_per_page = 8,
+    selected_page = 1,
+    ITEMS = {
+      music = {
+      },
+      live_ghost = {
+        item_width = 60,
+        extra_buttons = {
+          display_inputs = {x = 360, width = 95}
+        }
+      },
+      aspect_ratio = {
+        options = {"native", "widescreen", "21:9"},
+        item_width = 72
+      },
+      cc = {
+        options = {"50cc", "100cc", "150cc", "300cc", "off"},
+        item_width = 45
+      },
+      force_finish_race = {
+      },
+      ghost_flickering = {
+        options = {"no_flickering", "off"}
+      },
+      unlock_everything = {
+      },
+      replay_camera_hack = {
+      },
+      camera_view = {
+        item_width = 60,
+        options = {"1st_person", "aerial", "zoom_out", "off"}
+      }
+    }
+  }
 }
 
 function Config.loadJSON(filename)

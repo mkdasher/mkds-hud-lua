@@ -3,11 +3,11 @@ Program = {
 }
 
 function Program.main(pointer, dataBuffer)
+  
   Program.disableHUD()
-  Program.disableMusic()
-  Program.wideScreen()
-  Program.liveGhost()
+  Program.executeHacks(pointer)
   Program.executeActions()
+
 
   data = {}
 
@@ -78,36 +78,8 @@ function Program.executeActions()
   end
 end
 
-function Program.wideScreen()
-
-  base_ratio = 5461
-  local aspect_ratio = Config.Settings.HACKS.widescreen and "16:9" or "4:3"
-
-  if aspect_ratio == nil or aspect_ratio == "original" or aspect_ratio == "native" or aspect_ratio == "4:3" then
-    Memory.writeVariable(Memory.variable.aspect_ratio, base_ratio)
-    Memory.writeVariable(Memory.variable.hud_aspect_ratio, 1794)
-    return
-  elseif aspect_ratio == "wide" or aspect_ratio == "widescreen" or aspect_ratio == "16:9" then
-    Memory.writeVariable(Memory.variable.aspect_ratio, 0x1C71)
-    Memory.writeVariable(Memory.variable.hud_aspect_ratio, 2730)
-    return
-  end
-
-  if aspect_ratio == string.match(aspect_ratio, '%d+:%d+') then
-    ratio = {}
-    for k in string.gmatch(aspect_ratio, '%d+') do
-      table.insert(ratio, tonumber(k))
-    end
-    if ratio[2] == 0 then
-      Memory.writeVariable(Memory.variable.aspect_ratio, base_ratio)
-    else
-      new_ratio = math.floor(base_ratio * 3 * ratio[1] / 4 / ratio[2])
-      Memory.writeVariable(Memory.variable.aspect_ratio, new_ratio)
-    end
-  else
-    Memory.writeVariable(Memory.variable.aspect_ratio, base_ratio)
-  end
-
+function Program.executeHacks(pointer)
+  Hacks.runAll(pointer)
 end
 
 function Program.disableHUD()
@@ -116,17 +88,6 @@ function Program.disableHUD()
   Memory.writeVariable(Memory.variable.hud_player, Config.Settings.ORIGINAL_HUD.player_position and 1 or 0)
   Memory.writeVariable(Memory.variable.hud_timer, Config.Settings.ORIGINAL_HUD.timer and 1 or 0)
   Memory.writeVariable(Memory.variable.hud_final_time, Config.Settings.ORIGINAL_HUD.final_time and 1 or 0)
-end
-
-function Program.liveGhost()
-  Memory.writeVariable(Memory.variable.live_ghost, Config.Settings.HACKS.live_ghost and 1 or 0)
-end
-
-function Program.disableMusic()
-  music_value = 0x7f
-  if Config.Settings.HACKS.disable_music then music_value = 0 end
-  Memory.writeVariable(Memory.variable.music1, music_value)
-  Memory.writeVariable(Memory.variable.music2, music_value)
 end
 
 function Program.readTimer(offset)
