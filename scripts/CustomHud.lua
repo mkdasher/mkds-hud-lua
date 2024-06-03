@@ -6,7 +6,8 @@ CustomHud = {
     item_roulette = {},
     lap_counter = {},
     speedometer = {},
-    timer = {}
+    timer = {},
+    social_media = {}
   }
 }
 
@@ -14,7 +15,7 @@ CustomHud.Items.input_display.draw = function(data)
 
   local fade = 0
 
-  if Config.Settings.MISC.disable_idisplay_after_finish then
+  if Config.Settings.MISC.disable_input_display_after_finish_race then
     if (Display.isHUDfinished(data)) then return end
     fade = data.fade
   end
@@ -165,7 +166,7 @@ CustomHud.Items.lap_counter.draw = function(data)
   local x, y = Config.Settings.CUSTOM_HUD.lap_counter.position.x, Config.Settings.CUSTOM_HUD.lap_counter.position.y
   local scale = Config.Settings.CUSTOM_HUD.lap_counter.scale
 
-  if data.totallaps == 3 or data.totallaps == 5 then
+  if data.totallaps >= 1 and data.totallaps <= 5 then
     if data.lap > 1 and data.time_lap < 120 and data.time_lap % 12 > 7 and data.finished_run == 0 then
       Bitmap.printImage(x,y,"resources/lap_empty.bmp", data.fade, scale)
     else
@@ -236,4 +237,35 @@ CustomHud.Items.timer.draw = function(data)
     MarioFont.drawTimer(timer_position, data.current_timer, bordercolor, fillcolor, data.fade, scale)
   end
 
+end
+
+CustomHud.Items.social_media.draw = function(data)
+
+  if data.finished_run < 1 or data.time_lap < 140 then return end
+
+  local position = Config.Settings.CUSTOM_HUD_EXTRA.social_media.position
+  local scale = Config.Settings.CUSTOM_HUD_EXTRA.social_media.scale
+
+  local x,y = position.x, position.y
+
+  local items = Config.Settings.SOCIAL_MEDIA.items
+  local max_items = Config.Edit_Panel.HUD_SOCIALS.max_items
+
+  for i=1,#items,1 do
+    local x_offset = 0
+    local t_lap = 160 + 36 + i*#items - data.time_lap
+    if t_lap > 0 then x_offset = 270 * t_lap / 20 end
+
+    local height = y + (i - 1 - #items + max_items) * 40
+
+    if Config.Settings.SOCIAL_MEDIA.items[i].icon ~= nil and Config.Settings.SOCIAL_MEDIA.items[i].icon ~= '' then
+      local icon = 'resources/social/' .. Config.Settings.SOCIAL_MEDIA.items[i].icon .. '.bmp'
+      Bitmap.printImage(x + x_offset*scale, height, icon, data.fade, 1)
+    end
+
+    if Config.Settings.SOCIAL_MEDIA.items[i].text ~= nil and Config.Settings.SOCIAL_MEDIA.items[i].text ~= '' then
+      local scaleText = Config.Settings.SOCIAL_MEDIA.items[i].scale or 1
+      Display.MKDSText(x + x_offset*scale + 32 + 7, height + 5, Config.Settings.SOCIAL_MEDIA.items[i].text, scaleText*scale, 0xffffffff, data.fade)
+    end
+  end
 end

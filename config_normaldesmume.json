@@ -7,7 +7,7 @@
 	"show_kmh_decimals" : false,
     "show_time_label_on_timer": true,
     "show_slash_on_kmh": true,
-    "disable_idisplay_after_finish": false,
+    "disable_input_display_after_finish_race": false,
     "live_ghost_display_inputs": false
   },
   "ORIGINAL_HUD": {

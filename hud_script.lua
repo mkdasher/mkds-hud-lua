@@ -34,9 +34,10 @@ function fm()
   Input.update()
   if Config.EDIT_CUSTOM_HUD.enabled then gui.box(0,-Config.Settings.SCREEN_SIZE.height,Config.Settings.SCREEN_SIZE.width,0,"#00000044", "#00000044") end
   local showHUD = pointer[2] ~= 0 and dataBuffer[1] ~= nil
-  Display.displayHUD(dataBuffer, showHUD)
   Display.displayEditMenu(Config.Settings.SCREEN_SIZE)
+  Display.displayHUD(dataBuffer, showHUD)
   Display.displayRamData(dataBuffer, pointer, pointer_addresses)
+  Display.displayActions()
 end
 
 emu.registerafter(fn)

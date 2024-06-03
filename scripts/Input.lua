@@ -3,6 +3,33 @@ Input = {
   tab_prev = {}
 }
 
+function Input.getKeyboardInput()
+  for i = 65, 90 do
+      local key = string.char(i)
+      if Input.tab[key] and not Input.tab_prev[key] then
+          return key
+      end
+  end
+  for i = 48, 57 do  -- ASCII codes for '0' to '9'
+      local key = string.char(i)
+      if Input.tab[key] and not Input.tab_prev[key] then
+          return key
+      end
+      if Input.tab["numpad" .. key] and not Input.tab_prev["numpad" .. key] then
+          return key
+      end
+  end
+  if Input.tab["space"] and not Input.tab_prev["space"] then return " "
+  elseif Input.tab["minus"] and Input.tab["shift"] and not Input.tab_prev["minus"] then return "_"
+  elseif Input.tab["minus"] and not Input.tab_prev["minus"] then return "-"
+  elseif Input.tab["period"] and not Input.tab_prev["period"] then return "."
+  elseif Input.tab["backspace"] and not Input.tab_prev["backspace"] then return "delete"
+  elseif Input.tab["delete"] and not Input.tab_prev["delete"] then return "delete"
+  elseif Input.tab["enter"] and not Input.tab_prev["enter"] then return "enter"
+  end
+  return nil
+end
+
 function Input.update()
   Input.tab = input.get()
 
@@ -14,6 +41,11 @@ function Input.update()
     Input.onPress(xmouse, ymouse)
   elseif not Input.tab['rightclick'] and Input.tab_prev['rightclick'] then
     Input.onRelease(xmouse, ymouse)
+  end
+
+  local keyboardInput = Input.getKeyboardInput()
+  if keyboardInput ~= nil then
+    Input.onKeyboardInput(keyboardInput)
   end
 
   Input.tab_prev = Input.tab
@@ -48,6 +80,22 @@ end
 
 function Input.resizeCoordinates(xmouse, ymouse)
   return xmouse * Config.Settings.SCREEN_SIZE.width / 256, ymouse * Config.Settings.SCREEN_SIZE.height / 192
+end
+
+function Input.onKeyboardInput(keyboardPress)
+  if Config.EDIT_MENU.enabled then
+    if Config.Edit_Panel.TAB_MENU.TABS[Config.Edit_Panel.TAB_MENU.selected_tab] == "HUD_SOCIALS" then
+      if Config.Edit_Panel.HUD_SOCIALS.edit_mode == 'text' then
+        if keyboardPress == "enter" then
+          Config.Edit_Panel.HUD_SOCIALS.edit_mode = 'none'
+        elseif keyboardPress == "delete" then
+          Config.Settings.SOCIAL_MEDIA.items[Config.Edit_Panel.HUD_SOCIALS.selected_item].text = string.sub(Config.Settings.SOCIAL_MEDIA.items[Config.Edit_Panel.HUD_SOCIALS.selected_item].text, 1, -2)
+        else
+          Config.Settings.SOCIAL_MEDIA.items[Config.Edit_Panel.HUD_SOCIALS.selected_item].text = Config.Settings.SOCIAL_MEDIA.items[Config.Edit_Panel.HUD_SOCIALS.selected_item].text .. keyboardPress
+        end
+      end
+    end
+  end
 end
 
 function Input.onClick(xmouse, ymouse)
@@ -140,6 +188,82 @@ function Input.onClick(xmouse, ymouse)
         end
       end
 
+    elseif Config.Edit_Panel.TAB_MENU.TABS[Config.Edit_Panel.TAB_MENU.selected_tab] == "HUD_SOCIALS" then
+
+      if Input.isInRange(xmouse, ymouse,
+        Config.Edit_Panel.HUD_SOCIALS.x + Config.Edit_Panel.HUD_SOCIALS.enabled_button.x,
+        Config.Edit_Panel.HUD_SOCIALS.y + Config.Edit_Panel.HUD_SOCIALS.enabled_button.y,
+        Config.Edit_Panel.HUD_SOCIALS.enabled_button.width,
+        Config.Edit_Panel.HUD_SOCIALS.enabled_button.height) then
+          Config.Settings.CUSTOM_HUD_EXTRA.social_media.visible = not Config.Settings.CUSTOM_HUD_EXTRA.social_media.visible
+      end
+
+      if Config.Edit_Panel.HUD_SOCIALS.edit_mode == 'icon' then
+
+        if Input.isInRange(xmouse, ymouse,
+          Config.Edit_Panel.HUD_SOCIALS.x + Config.Edit_Panel.HUD_SOCIALS.cancel_button.x,
+          Config.Edit_Panel.HUD_SOCIALS.y + Config.Edit_Panel.HUD_SOCIALS.cancel_button.y,
+          Config.Edit_Panel.HUD_SOCIALS.cancel_button.width,
+          Config.Edit_Panel.HUD_SOCIALS.cancel_button.height) then
+            Config.Edit_Panel.HUD_SOCIALS.edit_mode = 'none'
+        end
+
+        for i = 1, #Config.SOCIAL_ICONS + 1, 1 do
+          local icons_x = Config.Edit_Panel.HUD_SOCIALS.x + Config.Edit_Panel.HUD_SOCIALS.edit_icon.x
+          local icons_y = Config.Edit_Panel.HUD_SOCIALS.y + Config.Edit_Panel.HUD_SOCIALS.edit_icon.y
+          local icons_size = Config.Edit_Panel.HUD_SOCIALS.edit_icon.size
+          local icons_dist = Config.Edit_Panel.HUD_SOCIALS.edit_icon.size + Config.Edit_Panel.HUD_SOCIALS.edit_icon.gap
+          local icons_per_row = Config.Edit_Panel.HUD_SOCIALS.edit_icon.items_per_row
+
+          if Input.isInRange(xmouse, ymouse,
+            icons_x - 4 + icons_dist * ((i-1) % icons_per_row),
+            icons_y - 4 + icons_dist * math.floor((i-1) / icons_per_row),
+            icons_size,
+            icons_size) then
+              if i <= #Config.SOCIAL_ICONS then
+                Config.Settings.SOCIAL_MEDIA.items[Config.Edit_Panel.HUD_SOCIALS.selected_item].icon = Config.SOCIAL_ICONS[i]
+              else
+                Config.Settings.SOCIAL_MEDIA.items[Config.Edit_Panel.HUD_SOCIALS.selected_item].icon = ''
+              end
+              Config.Edit_Panel.HUD_SOCIALS.edit_mode = 'none'
+          end
+        end
+
+      else
+
+        Config.Edit_Panel.HUD_SOCIALS.edit_mode = 'none' -- If click, reset to none mode
+
+        if #Config.Settings.SOCIAL_MEDIA.items < Config.Edit_Panel.HUD_SOCIALS.max_items then
+          if Input.isInRange(xmouse, ymouse,
+            Config.Edit_Panel.HUD_SOCIALS.x + Config.Edit_Panel.HUD_SOCIALS.add_element_button.x,
+            Config.Edit_Panel.HUD_SOCIALS.y + Config.Edit_Panel.HUD_SOCIALS.add_element_button.y,
+            Config.Edit_Panel.HUD_SOCIALS.add_element_button.width,
+            Config.Edit_Panel.HUD_SOCIALS.add_element_button.height) then
+              table.insert(Config.Settings.SOCIAL_MEDIA.items, {icon = '',text = '',scale = 1})
+          end
+        end
+
+        for i = 1, #Config.Settings.SOCIAL_MEDIA.items, 1 do
+          local preview_x = Config.Edit_Panel.HUD_SOCIALS.x + Config.Edit_Panel.HUD_SOCIALS.preview.x
+          local preview_y = Config.Edit_Panel.HUD_SOCIALS.y + Config.Edit_Panel.HUD_SOCIALS.preview.y
+          local preview_size = Config.Edit_Panel.HUD_SOCIALS.preview.size
+          local preview_dist = Config.Edit_Panel.HUD_SOCIALS.preview.size + Config.Edit_Panel.HUD_SOCIALS.preview.gap
+
+          if Input.isInRange(xmouse, ymouse, preview_x - 16, preview_y - 4 + preview_dist*(i-1), 10, 10) then
+            table.remove(Config.Settings.SOCIAL_MEDIA.items, i)
+          end
+          if Input.isInRange(xmouse, ymouse, preview_x - 4, preview_y - 4 + preview_dist*(i-1), preview_size, preview_size) then
+            Config.Edit_Panel.HUD_SOCIALS.edit_mode = 'icon'
+            Config.Edit_Panel.HUD_SOCIALS.selected_item = i
+          end
+          if Input.isInRange(xmouse, ymouse, preview_x + preview_size, preview_y - 4 + preview_dist*(i-1), Config.Edit_Panel.HUD_SOCIALS.width + Config.Edit_Panel.HUD_SOCIALS.x - preview_dist - preview_x, preview_size) then
+            Config.Edit_Panel.HUD_SOCIALS.edit_mode = 'text'
+            Config.Edit_Panel.HUD_SOCIALS.selected_item = i
+          end
+        end
+
+      end
+
     end
 
     -- EDIT MODE BUTTON
@@ -162,10 +286,23 @@ function Input.onClick(xmouse, ymouse)
     -- EDIT BUTTONS
 
     if Config.EDIT_CUSTOM_HUD.enabled then
+      local custom_hud_size, custom_hud_keys = Utils.getTableSizeAndKeys(Config.Settings.CUSTOM_HUD)
       for i = 1, custom_hud_size, 1 do
         local item_position = Config.Settings.CUSTOM_HUD[custom_hud_keys[i]].position
         if Input.isInRange(xmouse, ymouse, item_position.x, item_position.y, 15, 15) then
           Config.EDIT_CUSTOM_HUD.item = custom_hud_keys[i]
+          Config.EDIT_CUSTOM_HUD.block = 'CUSTOM_HUD'
+          Config.EDIT_CUSTOM_HUD.click_offset.x = xmouse - item_position.x
+          Config.EDIT_CUSTOM_HUD.click_offset.y = ymouse - item_position.y
+        end
+      end
+
+      local custom_hud_size, custom_hud_keys = Utils.getTableSizeAndKeys(Config.Settings.CUSTOM_HUD_EXTRA)
+      for i = 1, custom_hud_size, 1 do
+        local item_position = Config.Settings.CUSTOM_HUD_EXTRA[custom_hud_keys[i]].position
+        if Input.isInRange(xmouse, ymouse, item_position.x, item_position.y, 15, 15) then
+          Config.EDIT_CUSTOM_HUD.item = custom_hud_keys[i]
+          Config.EDIT_CUSTOM_HUD.block = 'CUSTOM_HUD_EXTRA'
           Config.EDIT_CUSTOM_HUD.click_offset.x = xmouse - item_position.x
           Config.EDIT_CUSTOM_HUD.click_offset.y = ymouse - item_position.y
         end
@@ -196,8 +333,8 @@ end
 function Input.onPress(xmouse, ymouse)
   if Config.EDIT_MENU.enabled then
     if Config.EDIT_CUSTOM_HUD.enabled and Config.EDIT_CUSTOM_HUD.item ~= nil then
-      Config.Settings.CUSTOM_HUD[Config.EDIT_CUSTOM_HUD.item].position.x = math.floor(xmouse - Config.EDIT_CUSTOM_HUD.click_offset.x)
-      Config.Settings.CUSTOM_HUD[Config.EDIT_CUSTOM_HUD.item].position.y = math.floor(ymouse - Config.EDIT_CUSTOM_HUD.click_offset.y)
+      Config.Settings[Config.EDIT_CUSTOM_HUD.block][Config.EDIT_CUSTOM_HUD.item].position.x = math.floor(xmouse - Config.EDIT_CUSTOM_HUD.click_offset.x)
+      Config.Settings[Config.EDIT_CUSTOM_HUD.block][Config.EDIT_CUSTOM_HUD.item].position.y = math.floor(ymouse - Config.EDIT_CUSTOM_HUD.click_offset.y)
     end
   end
 end
@@ -205,6 +342,7 @@ end
 function Input.onRelease(xmouse, ymouse)
   if Config.EDIT_MENU.enabled then
     Config.EDIT_CUSTOM_HUD.item = nil
+    Config.EDIT_CUSTOM_HUD.block = nil
     Config.SAVE_CONFIG.pressed = false
   end
 end

@@ -4,6 +4,7 @@ Config = {
   FILENAME = "config.json",
   EDIT_CUSTOM_HUD = {
     enabled = false,
+    block = nil,
     item = nil,
     click_offset = {x = 0, y = 0}
   },
@@ -31,6 +32,9 @@ Config.Settings = {
     boost = {visible = true, position = {x = 418, y = -27}, scale = 1},
     timer = {visible = true, position = {x = 388, y = -346}, scale = 2},
     final_time = {visible = true, position = {x = 380, y = -338}, scale = 2}
+  },
+  CUSTOM_HUD_EXTRA = {
+    social_media = {visible = true, position = {x = 422, y = -163}, scale = 1}
   },
   MISC = {
     disable_input_display_after_finish_race = true,
@@ -70,9 +74,24 @@ Config.Settings = {
     background = 0x00ff00ff,
     background_fill = 0x00000020
   },
+  SOCIAL_MEDIA = {
+    items = {
+    }
+  },
   SCREEN_SIZE = {
     width = 640, height = 360
   }
+}
+
+Config.SOCIAL_ICONS = {
+  "discord",
+  "instagram",
+  "patreon",
+  "tiktok",
+  "twitch",
+  "twitter",
+  "x",
+  "youtube"
 }
 
 Config.Edit_Panel = {
@@ -82,6 +101,7 @@ Config.Edit_Panel = {
     TABS = {
       'HUD_ELEMENTS',
       'HUD_SETTINGS',
+      'HUD_SOCIALS',
       'HACKS'
     }
   },
@@ -92,14 +112,20 @@ Config.Edit_Panel = {
   SAVE_CONFIG_BUTTON = {x = 10, y = 290, width = 100, height = 25},
   HIDE_MENU_BUTTON = {x = 10, y = 325, width = 100, height = 25},
   ACTIONS = {x = 245, y = 300, width = 100, item_height = 25},
-  RAM_DATA = {x = 485, y = 40},
+  RAM_DATA = {x = 480, y = 15},
+  HUD_SOCIALS = {
+    x = 100, y = 30, width = 370,
+    max_items = 4,
+    edit_mode = 'none', --text, icon, none
+    selected_item = 1,
+    edit_icon = {x = 65, y = 45, gap = 15, size = 40, items_per_row = 5},
+    preview = {x = 30, y = 45, gap = 5, size = 40},
+    enabled_button = {x = 5, y = 5, width = 50, height = 20},
+    add_element_button = {x = 140, y = 212, width = 90, height = 20},
+    cancel_button = {x = 140, y = 212, width = 90, height = 20}
+  },
   HACKS = {
-    x = 100,
-    y = 40,
-    width = 370,
-    item_height = 20,
-    item_gap = 5,
-    header_width = 125,
+    x = 100, y = 40, width = 370, item_height = 20, item_gap = 5, header_width = 125,
     default_item_width = 100,
     items_per_page = 8,
     selected_page = 1,

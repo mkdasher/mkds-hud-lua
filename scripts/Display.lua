@@ -2,7 +2,8 @@ Display = {
   Button = {
     pressed = {0x0000ffff, 0xffffffff, 0xffffffff, 0x000000ff},
     unpressed = {0x00000000, 0xffffffff, 0xaaaaaaff, 0x000000ff},
-    disabled = {0x00000000, 0xaaaaaaff, 0xaaaaaaff, 0x000000ff}
+    disabled = {0x00000000, 0xaaaaaaff, 0xaaaaaaff, 0x000000ff},
+    cancel = {0xff000033, 0xff0000ff,  0xff4444ff, 0x000000ff},
   },
   Edit_Mode = {
     unpressed = {0xffffff88, 0xffffffff},
@@ -10,18 +11,45 @@ Display = {
   }
 }
 
+function Display.MKDSText(x, y, text, scale, color, fade)
+  current_x = x
+  for i = 1, #text do
+    local caracter = text:sub(i, i)
+    if string.match(caracter, "%w") then
+      caracter = string.upper(caracter)
+    elseif caracter == '.' then
+      caracter = 'dot'
+    elseif caracter == '_' or caracter == '-' then
+      -- do nothing
+    else
+      caracter = ' '
+    end
+
+    if caracter == ' ' then
+      current_x = current_x + 10 * scale
+    else
+      bmpfile = 'resources/font/' .. caracter .. '.bmp'
+      Bitmap.printFont(current_x, y, bmpfile, fade, scale, color)
+      current_x = current_x + (Bitmap.buffer[bmpfile].width - 2) * scale
+    end
+  end
+end
+
 function Display.isHUDfinished(data)
   return data.finished_run == 1 and data.time_lap > 127
 end
 
 function Display.displayHUD(dataBuffer, showHUD)
-  local custom_hud_size, custom_hud_keys = Utils.getTableSizeAndKeys(CustomHud.Items)
+  local custom_hud_size, custom_hud_keys = Utils.getTableSizeAndKeys(Config.Settings.CUSTOM_HUD)
   for i = 1, custom_hud_size, 1 do
-    if custom_hud_keys[i] == "input_display" and not Config.Settings.MISC.disable_idisplay_after_finish and Config.Settings.CUSTOM_HUD[custom_hud_keys[i]].visible then
+    if custom_hud_keys[i] == "input_display" and not Config.Settings.MISC.disable_input_display_after_finish_race and Config.Settings.CUSTOM_HUD[custom_hud_keys[i]].visible then
       CustomHud.Items[custom_hud_keys[i]].draw(dataBuffer[1])
     elseif showHUD and Config.Settings.CUSTOM_HUD[custom_hud_keys[i]].visible then
       CustomHud.Items[custom_hud_keys[i]].draw(dataBuffer[1])
     end
+  end
+  if showHUD and Config.Settings.CUSTOM_HUD_EXTRA.social_media.visible then
+    CustomHud.Items.social_media.draw(dataBuffer[1])
   end
 end
 
@@ -67,33 +95,47 @@ function Display.displayRamData(dataBuffer, pointer, pointer_addresses)
 
   if not Config.EDIT_MENU.enabled then return end
 
-  Display.displayRamDataItem(0 ,0, "RAM DATA", 'yellow')
+  Display.MKDSText(Config.Edit_Panel.RAM_DATA.x, Config.Edit_Panel.RAM_DATA.y, "RAM DATA", 0.8, 0xffd684ff, 0)
 
-  Display.displayRamDataItem(0 , 20, "Pointers")
-  Display.displayRamDataItem(0,  30, "1: [" .. bit.tohex(pointer_addresses[1]) .. "] -> " .. bit.tohex(pointer[1]))
-  Display.displayRamDataItem(0,  40, "2: [" .. bit.tohex(pointer_addresses[2]) .. "] -> " .. bit.tohex(pointer[2]))
-  Display.displayRamDataItem(0,  50, "3: [" .. bit.tohex(pointer_addresses[3]) .. "] -> " .. bit.tohex(pointer[3]))
+  Display.displayRamDataItem(0 , 30, "Pointers")
+  Display.displayRamDataItem(0,  40, "1: [" .. bit.tohex(pointer_addresses[1]) .. "] -> " .. bit.tohex(pointer[1]))
+  Display.displayRamDataItem(0,  50, "2: [" .. bit.tohex(pointer_addresses[2]) .. "] -> " .. bit.tohex(pointer[2]))
+  Display.displayRamDataItem(0,  60, "3: [" .. bit.tohex(pointer_addresses[3]) .. "] -> " .. bit.tohex(pointer[3]))
 
   if dataBuffer[1] == nil then return end
   local data = dataBuffer[1]
 
-  Display.displayRamDataItem(0,  70, "X: " .. data.position.x)
-  Display.displayRamDataItem(0,  80, "Y: " .. data.position.y)
-  Display.displayRamDataItem(0,  90, "Z: " .. data.position.z)
-  Display.displayRamDataItem(0, 100, "Speed: " .. data.real_speed)
-  Display.displayRamDataItem(0, 110, "Internal Speed: " .. data.speed)
+  Display.displayRamDataItem(0,  80, "X: " .. data.position.x)
+  Display.displayRamDataItem(0,  90, "Y: " .. data.position.y)
+  Display.displayRamDataItem(0, 100, "Z: " .. data.position.z)
+  Display.displayRamDataItem(0, 110, "Speed: " .. data.real_speed)
+  Display.displayRamDataItem(0, 120, "Internal Speed: " .. data.speed)
+  Display.displayRamDataItem(0, 130, "Max Speed: " .. data.max_speed)
 
-  Display.displayRamDataItem(0, 130, "Boost: " .. data.boost)
-  Display.displayRamDataItem(0, 140, "Boost (mt only): " .. data.boost_mt)
+  Display.displayRamDataItem(0, 150, "Boost: " .. data.boost)
+  Display.displayRamDataItem(0, 160, "Boost (mt only): " .. data.boost_mt)
+  Display.displayRamDataItem(0, 170, "MT timer: " .. data.mt_timer)
 
-  Display.displayRamDataItem(0, 160, "Checkpoint: " .. data.checkpoint)
-  Display.displayRamDataItem(0, 170, "Key Checkpoint: " .. data.keycheckpoint)
+  Display.displayRamDataItem(0, 190, "Turning loss: " .. data.turning_loss)
+  Display.displayRamDataItem(0, 200, "Grip: " .. data.grip)
+  Display.displayRamDataItem(0, 210, "State: " .. data.air_state)
 
-  Display.displayRamDataItem(0, 190, "Timer: " .. data.current_timer)
-  Display.displayRamDataItem(0, 200, "Lap (frames): " .. data.time_lap)
+  Display.displayRamDataItem(0, 230, "Checkpoint: " .. data.checkpoint .. " (Key: " .. data.keycheckpoint .. ")")
+
+  Display.displayRamDataItem(0, 250, "Timer: " .. data.current_timer)
+  Display.displayRamDataItem(0, 260, "Lap (frames): " .. data.time_lap)
 
   for i = 1, data.totallaps, 1 do
-    Display.displayRamDataItem(0, 210 + i*10, "Lap " .. i .. ": " .. data.lap_timer[i])
+    Display.displayRamDataItem(0, 270 + i*10, "Lap " .. i .. ": " .. data.lap_timer[i])
+  end
+
+end
+
+function Display.displayActions()
+
+  local actions_size, actions_keys = Utils.getTableSizeAndKeys(Actions.Items)
+  for i = 1, actions_size, 1 do
+    Actions.Items[actions_keys[i]].draw()
   end
 
 end
@@ -134,7 +176,7 @@ function Display.displayEditMenu(screensize)
 
   if Config.Edit_Panel.TAB_MENU.TABS[Config.Edit_Panel.TAB_MENU.selected_tab] == "HUD_ELEMENTS" then
 
-    local custom_hud_size, custom_hud_keys = Utils.getTableSizeAndKeys(CustomHud.Items)
+    local custom_hud_size, custom_hud_keys = Utils.getTableSizeAndKeys(Config.Settings.CUSTOM_HUD)
     local custom_hud_buttontypes = {}
     for i = 1, custom_hud_size, 1 do
       custom_hud_buttontypes[i] = Config.Settings.CUSTOM_HUD[custom_hud_keys[i]].visible and "pressed" or "unpressed"
@@ -261,6 +303,124 @@ function Display.displayEditMenu(screensize)
 
   end
 
+  -- HUD Socials
+
+  if Config.Edit_Panel.TAB_MENU.TABS[Config.Edit_Panel.TAB_MENU.selected_tab] == "HUD_SOCIALS" then
+
+    Display.button(
+      Config.Edit_Panel.HUD_SOCIALS.x + Config.Edit_Panel.HUD_SOCIALS.enabled_button.x,
+      Config.Edit_Panel.HUD_SOCIALS.y + Config.Edit_Panel.HUD_SOCIALS.enabled_button.y,
+      Config.Edit_Panel.HUD_SOCIALS.x + Config.Edit_Panel.HUD_SOCIALS.enabled_button.x + Config.Edit_Panel.HUD_SOCIALS.enabled_button.width,
+      Config.Edit_Panel.HUD_SOCIALS.y + Config.Edit_Panel.HUD_SOCIALS.enabled_button.y + Config.Edit_Panel.HUD_SOCIALS.enabled_button.height,
+      "ENABLED",
+      Config.Edit_Panel.HUD_SOCIALS.enabled_button,
+      Config.Settings.CUSTOM_HUD_EXTRA.social_media.visible and "pressed" or "unpressed"
+    )
+
+    if Config.Edit_Panel.HUD_SOCIALS.edit_mode == 'icon' then
+
+      Display.MKDSText(Config.Edit_Panel.HUD_SOCIALS.x + 120, Config.Edit_Panel.HUD_SOCIALS.y + 12, "SELECT ICON", 0.8, 0xffffffff, 0)
+
+      Display.button(
+        Config.Edit_Panel.HUD_SOCIALS.x + Config.Edit_Panel.HUD_SOCIALS.cancel_button.x,
+        Config.Edit_Panel.HUD_SOCIALS.y + Config.Edit_Panel.HUD_SOCIALS.cancel_button.y,
+        Config.Edit_Panel.HUD_SOCIALS.x + Config.Edit_Panel.HUD_SOCIALS.cancel_button.x + Config.Edit_Panel.HUD_SOCIALS.cancel_button.width,
+        Config.Edit_Panel.HUD_SOCIALS.y + Config.Edit_Panel.HUD_SOCIALS.cancel_button.y + Config.Edit_Panel.HUD_SOCIALS.cancel_button.height,
+        "CANCEL",
+        Config.Edit_Panel.HUD_SOCIALS.cancel_button,
+        "cancel"
+      )
+
+      for i = 1, #Config.SOCIAL_ICONS + 1, 1 do
+        local icons_x = Config.Edit_Panel.HUD_SOCIALS.x + Config.Edit_Panel.HUD_SOCIALS.edit_icon.x
+        local icons_y = Config.Edit_Panel.HUD_SOCIALS.y + Config.Edit_Panel.HUD_SOCIALS.edit_icon.y
+        local icons_size = Config.Edit_Panel.HUD_SOCIALS.edit_icon.size
+        local icons_dist = Config.Edit_Panel.HUD_SOCIALS.edit_icon.size + Config.Edit_Panel.HUD_SOCIALS.edit_icon.gap
+        local icons_per_row = Config.Edit_Panel.HUD_SOCIALS.edit_icon.items_per_row
+
+        gui.box(
+          icons_x - 4 + icons_dist * ((i-1) % icons_per_row),
+          icons_y - 4 + icons_dist * math.floor((i-1) / icons_per_row),
+          icons_x - 4 + icons_dist * ((i-1) % icons_per_row) + icons_size,
+          icons_y - 4 + icons_dist * math.floor((i-1) / icons_per_row) + icons_size,
+          0x00000000,
+          'white'
+        )
+        if i <= #Config.SOCIAL_ICONS then
+          icon = 'resources/social/' .. Config.SOCIAL_ICONS[i] .. '.bmp'
+          Bitmap.printImage(
+            icons_x + icons_dist * ((i-1) % icons_per_row),
+            icons_y + icons_dist * math.floor((i-1) / icons_per_row),
+            icon, 0, 1)
+        end
+
+      end
+
+    else
+
+      if #Config.Settings.SOCIAL_MEDIA.items < Config.Edit_Panel.HUD_SOCIALS.max_items then
+        Display.button(
+          Config.Edit_Panel.HUD_SOCIALS.x + Config.Edit_Panel.HUD_SOCIALS.add_element_button.x,
+          Config.Edit_Panel.HUD_SOCIALS.y + Config.Edit_Panel.HUD_SOCIALS.add_element_button.y,
+          Config.Edit_Panel.HUD_SOCIALS.x + Config.Edit_Panel.HUD_SOCIALS.add_element_button.x + Config.Edit_Panel.HUD_SOCIALS.add_element_button.width,
+          Config.Edit_Panel.HUD_SOCIALS.y + Config.Edit_Panel.HUD_SOCIALS.add_element_button.y + Config.Edit_Panel.HUD_SOCIALS.add_element_button.height,
+          "ADD ELEMENT",
+          Config.Edit_Panel.HUD_SOCIALS.add_element_button,
+          "pressed"
+        )
+      end
+
+      for i = 1, #Config.Settings.SOCIAL_MEDIA.items, 1 do
+        local preview_x = Config.Edit_Panel.HUD_SOCIALS.x + Config.Edit_Panel.HUD_SOCIALS.preview.x
+        local preview_y = Config.Edit_Panel.HUD_SOCIALS.y + Config.Edit_Panel.HUD_SOCIALS.preview.y
+        local preview_size = Config.Edit_Panel.HUD_SOCIALS.preview.size
+        local preview_dist = Config.Edit_Panel.HUD_SOCIALS.preview.size + Config.Edit_Panel.HUD_SOCIALS.preview.gap
+
+        -- X cancel buttons: Not using Display.button here cause it doesn't center the X properly
+        gui.box(
+          preview_x - 16,
+          preview_y - 4 + preview_dist*(i-1),
+          preview_x - 6,
+          preview_y - 4 + 10 + preview_dist*(i-1),
+          0xff000066,
+          'red'
+        )
+        gui.text(preview_x - 13, preview_y - 2 + preview_dist*(i-1), "X", "red")
+
+        -- Social boxes
+        gui.box(
+          preview_x - 4,
+          preview_y - 4 + preview_dist*(i-1),
+          preview_x - 4 + preview_size,
+          preview_y - 4 + preview_size + preview_dist*(i-1),
+          0x00000000,
+          'white'
+        )
+        gui.box(
+          preview_x + preview_size,
+          preview_y - 4 + preview_dist*(i-1),
+          Config.Edit_Panel.HUD_SOCIALS.x + Config.Edit_Panel.HUD_SOCIALS.width - Config.Edit_Panel.HUD_SOCIALS.preview.gap,
+          preview_y - 4 + preview_size + preview_dist*(i-1),
+          (Config.Edit_Panel.HUD_SOCIALS.edit_mode == 'text' and Config.Edit_Panel.HUD_SOCIALS.selected_item == i) and 0xffff0033 or 0x00000000,
+          'white'
+        )
+
+        if Config.Settings.SOCIAL_MEDIA.items[i].icon ~= nil and Config.Settings.SOCIAL_MEDIA.items[i].icon ~= '' then
+          icon = 'resources/social/' .. Config.Settings.SOCIAL_MEDIA.items[i].icon .. '.bmp'
+          Bitmap.printImage(preview_x, preview_y + preview_dist*(i-1), icon, 0, 1)
+        end
+        if Config.Settings.SOCIAL_MEDIA.items[i].text ~= nil and Config.Settings.SOCIAL_MEDIA.items[i].text ~= '' then
+          local scale = Config.Settings.SOCIAL_MEDIA.items[i].scale or 1
+          Display.MKDSText(preview_x + preview_dist, preview_y + preview_dist*(i-1) + 5, Config.Settings.SOCIAL_MEDIA.items[i].text, scale,
+            (Config.Edit_Panel.HUD_SOCIALS.edit_mode == 'text' and Config.Edit_Panel.HUD_SOCIALS.selected_item == i) and 0xeeee00ff or 0xffffffff, 0
+          )
+        end
+      end
+
+    end
+
+  end
+
   -- Edit Mode
 
   Display.button(
@@ -274,6 +434,8 @@ function Display.displayEditMenu(screensize)
   )
 
   if Config.EDIT_CUSTOM_HUD.enabled then
+
+    local custom_hud_size, custom_hud_keys = Utils.getTableSizeAndKeys(Config.Settings.CUSTOM_HUD)
     for i = 1, custom_hud_size, 1 do
       local item_position = Config.Settings.CUSTOM_HUD[custom_hud_keys[i]].position
       if Config.EDIT_CUSTOM_HUD.item == custom_hud_keys[i] then
@@ -283,6 +445,18 @@ function Display.displayEditMenu(screensize)
         gui.box(item_position.x, item_position.y, item_position.x + 15, item_position.y + 15, Display.Edit_Mode.unpressed[1], Display.Edit_Mode.unpressed[2])
       end
     end
+
+    local custom_hud_size, custom_hud_keys = Utils.getTableSizeAndKeys(Config.Settings.CUSTOM_HUD_EXTRA)
+    for i = 1, custom_hud_size, 1 do
+      local item_position = Config.Settings.CUSTOM_HUD_EXTRA[custom_hud_keys[i]].position
+      if Config.EDIT_CUSTOM_HUD.item == custom_hud_keys[i] then
+        gui.text(item_position.x - 5, item_position.y - 10, "(" .. item_position.x .. ", " .. item_position.y .. ")", Display.Edit_Mode.pressed[2], 0x000000ff)
+        gui.box(item_position.x, item_position.y, item_position.x + 15, item_position.y + 15, Display.Edit_Mode.pressed[1], Display.Edit_Mode.pressed[2])
+      else
+        gui.box(item_position.x, item_position.y, item_position.x + 15, item_position.y + 15, Display.Edit_Mode.unpressed[1], Display.Edit_Mode.unpressed[2])
+      end
+    end
+
   end
 
   -- Actions Menu
@@ -318,12 +492,5 @@ function Display.displayEditMenu(screensize)
     Config.Edit_Panel.HIDE_MENU_BUTTON,
     "unpressed"
   )
-
-  -- Actions
-
-  for i = 1, actions_size, 1 do
-    Actions.Items[actions_keys[i]].draw()
-  end
-
 
 end

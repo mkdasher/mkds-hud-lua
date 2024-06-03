@@ -3,7 +3,7 @@ Program = {
 }
 
 function Program.main(pointer, dataBuffer)
-  
+
   Program.disableHUD()
   Program.executeHacks(pointer)
   Program.executeActions()
@@ -18,8 +18,10 @@ function Program.main(pointer, dataBuffer)
     data.prb = memory.readbyteunsigned(pointer[2] + 0x4B)
     data.prb = bit.rshift(bit.band(data.prb, 32), 5)
     data.speed = memory.readbytesigned(pointer[2] + 0x45E)
+    data.max_speed = memory.readdword(pointer[2] + 0xD0)
     data.boost = memory.readbytesigned(pointer[2] + 0x238)
     data.boost_mt = memory.readbytesigned(pointer[2] + 0x23C)
+    data.mt_timer = memory.readbytesigned(pointer[2] + 0x30C)
     data.shroom = memory.readbytesigned(pointer[3] + 0x54)
     data.lap = Memory.readVariable(Memory.variable.lap)
     data.totallaps = Memory.readVariable(Memory.variable.totallaps)
@@ -28,6 +30,12 @@ function Program.main(pointer, dataBuffer)
     data.finished_run = Memory.readVariable(Memory.variable.finished_run)
     data.ghost_input = Memory.readVariable(Memory.variable.ghost_input)
     data.fade = Memory.readVariable(Memory.variable.fade)
+
+    data.turning_loss = memory.readdwordsigned(pointer[2] + 0x2D4)
+    data.turning_loss = string.format("%.4f", data.turning_loss/-4096)
+    data.grip = memory.readdword(pointer[2] + 0x240)
+    data.grip = string.format("%.4f", data.grip/4096)
+    data.air_state = (memory.readbyte(pointer[2] + 0x3DD) == 0) and "On Ground" or "In Air"
 
     data.checkpoint = memory.readbytesigned(pointer[1] + 0x46)
   	data.keycheckpoint = memory.readbytesigned(pointer[1] + 0x48)

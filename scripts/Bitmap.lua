@@ -99,6 +99,25 @@ function Bitmap.printImageIndexed(x,y,filename,palette,finalPalette,fade,scale)
   end
 end
 
+function Bitmap.printFont(x,y,filename,fade,scale, bgcolor)
+  Bitmap.readImage(filename)
+
+  local image = Bitmap.buffer[filename]
+
+  if image == nil then return end
+
+  for i=0,image.height-1,1 do
+    for j=0,image.width-1,1 do
+      color = image[j+1][i+1]
+      if color == 0xffffffff then
+        Bitmap.drawPixel(x + j*scale, y + i*scale, bgcolor, fade, scale)
+      elseif color ~= 0x01863ff and color ~= 0x001063ff then
+        Bitmap.drawPixel(x + j*scale, y + i*scale, color, fade, scale)
+      end
+    end
+  end
+end
+
 function Bitmap.printImage(x,y,filename,fade,scale)
   Bitmap.readImage(filename)
 
@@ -131,5 +150,18 @@ function Bitmap.loadAllBitmaps()
 	Bitmap.readImage('resources/lap_empty.bmp')
 	Bitmap.readImage('resources/lap_total3.bmp')
 	Bitmap.readImage('resources/lap_total5.bmp')
+  for i = 1, #Config.SOCIAL_ICONS, 1 do
+    Bitmap.readImage('resources/social/' .. Config.SOCIAL_ICONS[i] .. '.bmp')
+  end
+  for i = 65, 90 do
+    local letter = string.char(i)
+    Bitmap.readImage('resources/font/' .. string.char(i) .. '.bmp')
+  end
+  for i = 0, 9 do
+    Bitmap.readImage('resources/font/' .. i .. '.bmp')
+  end
+  Bitmap.readImage('resources/font/_.bmp')
+  Bitmap.readImage('resources/font/-.bmp')
+  Bitmap.readImage('resources/font/dot.bmp')
 	print('Finished reading all resources!')
 end
