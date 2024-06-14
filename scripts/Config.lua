@@ -52,6 +52,8 @@ Config.Settings = {
     cc = 'off',
     force_finish_race = false,
     ghost_flickering = "off",
+	invisible_ghost = false,
+	moonjump = "off",
     unlock_everything = false,
     replay_camera_hack = false
   },
@@ -151,6 +153,8 @@ Config.Edit_Panel = {
       ghost_flickering = {
         options = {"no_flickering", "off"}
       },
+	  invisible_ghost = {
+	  },
       unlock_everything = {
       },
       replay_camera_hack = {
