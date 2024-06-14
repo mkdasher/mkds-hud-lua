@@ -113,7 +113,7 @@ function Input.onClick(xmouse, ymouse)
 
     if Config.Edit_Panel.TAB_MENU.TABS[Config.Edit_Panel.TAB_MENU.selected_tab] == "HUD_ELEMENTS" then
 
-      local custom_hud_size, custom_hud_keys = Utils.getTableSizeAndKeys(CustomHud.Items)
+      local custom_hud_size, custom_hud_keys = Utils.getTableSizeAndKeys(Config.Settings.CUSTOM_HUD)
       if Input.isInRange(xmouse, ymouse, Config.Edit_Panel.CUSTOM_HUD.x, Config.Edit_Panel.CUSTOM_HUD.y, Config.Edit_Panel.CUSTOM_HUD.width, Config.Edit_Panel.CUSTOM_HUD.item_height * custom_hud_size) then
         local selectedItem = math.floor((ymouse - Config.Edit_Panel.CUSTOM_HUD.y) / Config.Edit_Panel.CUSTOM_HUD.item_height) + 1
         Config.Settings.CUSTOM_HUD[custom_hud_keys[selectedItem]].visible = not Config.Settings.CUSTOM_HUD[custom_hud_keys[selectedItem]].visible
