@@ -74,6 +74,14 @@ function Hacks.functions.ghost_flickering(pointer)
   end
 end
 
+function Hacks.functions.invisible_ghost(pointer)
+  if pointer[2] ~= 0 then
+    if Config.Settings.HACKS.invisible_ghost then
+      memory.writeword(pointer[2] + 0x92C, 0xffff)
+    end
+  end
+end
+
 function Hacks.functions.liveGhost(pointer)
   Memory.writeVariable(Memory.variable.live_ghost, Config.Settings.HACKS.live_ghost and 1 or 0)
 end
